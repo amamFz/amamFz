@@ -6,7 +6,7 @@
     <img src="https://komarev.com/ghpvc/?username=amamfz&label=Profile%20views&color=0e75b6&style=flat" alt="amamfz" />
 </p>
 
-- 🌱 Saat ini saya sedang belajar **React js, Selanjutnya js**
+- 🌱 Saat ini saya sedang belajar **React js, Next js**
 
 - 📫 Cara menghubungi saya **if7232232@gmail.com**
 
