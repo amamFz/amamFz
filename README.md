@@ -2,14 +2,14 @@
 
 ###
 
-<div align="left">
-  <img src="https://github-readme-stats.vercel.app/api?username=amamFz&hide_title=false&hide_rank=false&show_icons=true&include_all_commits=true&count_private=true&disable_animations=false&theme=dracula&locale=en&hide_border=false" height="150" alt="GitHub Stats" />
-  <img src="https://github-readme-stats.vercel.app/api/top-langs?username=amamFz&locale=en&hide_title=false&layout=compact&card_width=320&langs_count=6&theme=dracula&hide_border=false" height="150" alt="Top Languages" />
+<div align="left" style="background-color: white;">
+  <img src="https://github-readme-stats.vercel.app/api?username=amamFz&hide_title=false&hide_rank=false&show_icons=true&include_all_commits=true&count_private=true&disable_animations=false&theme=white&locale=en&hide_border=false" height="150" alt="GitHub Stats" />
+  <img src="https://github-readme-stats.vercel.app/api/top-langs?username=amamFz&locale=en&hide_title=false&layout=compact&card_width=320&langs_count=6&theme=white&hide_border=false" height="150" alt="Top Languages" />
 </div>
 
 ###
 
-<img align="right" height="150" src="https://media1.tenor.com/m/Qpa94KC4rmcAAAAd/anime-anime-gif.gif" alt="Anime GIF" />
+<img align="right" height="200" src="https://media1.tenor.com/m/Qpa94KC4rmcAAAAd/anime-anime-gif.gif" alt="Anime GIF" />
 
 ###
 
