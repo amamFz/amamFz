@@ -1,5 +1,8 @@
 <h2 align="left">Hi 👋! My name is Ilham Fauzi, a Front-End Developer from Indonesia</h2>
 
+I'm a passionate Front-End Developer with a strong enthusiasm for crafting intuitive, responsive, and visually engaging user interfaces. I thrive on using modern front-end technologies and design principles to create seamless user experiences while staying updated with the latest industry trends.
+
+
 ###
 
 <div align="left" style="background-color: white;">
