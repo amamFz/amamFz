@@ -2,8 +2,8 @@
 
 I'm a passionate Front-End Developer with a strong enthusiasm for crafting intuitive, responsive, and visually engaging user interfaces. I thrive on using modern front-end technologies and design principles to create seamless user experiences while staying updated with the latest industry trends.
 
-
 ###
+
 
 <div align="left" style="background-color: white;">
   <img src="https://github-readme-stats.vercel.app/api?username=amamFz&hide_title=false&hide_rank=false&show_icons=true&include_all_commits=true&count_private=true&disable_animations=false&theme=dracula&locale=en&hide_border=false" height="150" alt="GitHub Stats" />
@@ -15,6 +15,7 @@ I'm a passionate Front-End Developer with a strong enthusiasm for crafting intui
 <img align="right" height="200" src="https://media1.tenor.com/m/Qpa94KC4rmcAAAAd/anime-anime-gif.gif" alt="Anime GIF" />
 
 ###
+### 🛠️ Technologies & Tools  
 
 <div align="left">
   <img src="https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white&style=for-the-badge" height="30" alt="HTML5" />
@@ -37,6 +38,7 @@ I'm a passionate Front-End Developer with a strong enthusiasm for crafting intui
 
 
 ###
+## 📫 Let's Connect  
 
 <div align="left">
   <a href="https://www.instagram.com/_uzii.cipher/" target="_blank"><img src="https://img.shields.io/static/v1?message=Instagram&logo=instagram&label=&color=E4405F&logoColor=white&labelColor=&style=for-the-badge" height="35" alt="Instagram" /></a>
