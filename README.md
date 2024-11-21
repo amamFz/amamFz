@@ -15,7 +15,7 @@ I'm a passionate Front-End Developer with a strong enthusiasm for crafting intui
 <img align="right" height="200" src="https://media1.tenor.com/m/Qpa94KC4rmcAAAAd/anime-anime-gif.gif" alt="Anime GIF" />
 
 ###
-### 🛠️ Technologies & Tools  
+## 🛠️ Technologies & Tools  
 
 <div align="left">
   <img src="https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white&style=for-the-badge" height="30" alt="HTML5" />
