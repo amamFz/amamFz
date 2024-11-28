@@ -1,4 +1,4 @@
-<h2 align="left">Hi 👋! My name is Ilham Fauzi, a Front-End Developer from Indonesia</h2>
+<h2 align="left">Hi <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/Waving%20Hand.png" alt="Waving Hand" width="25" height="25" /> My name is Ilham Fauzi, a Front-End Developer from Indonesia</h2>
 
 I'm a passionate Front-End Developer with a strong enthusiasm for crafting intuitive, responsive, and visually engaging user interfaces. I thrive on using modern front-end technologies and design principles to create seamless user experiences while staying updated with the latest industry trends.
 
@@ -46,7 +46,6 @@ I'm a passionate Front-End Developer with a strong enthusiasm for crafting intui
   <img src="https://img.shields.io/badge/Visual Studio Code-007ACC?logo=visualstudiocode&logoColor=white&style=for-the-badge" height="30" alt="VSCode" />
   <img src="https://img.shields.io/badge/Adobe Illustrator-FF9A00?logo=adobeillustrator&logoColor=black&style=for-the-badge" height="30" alt="Adobe Illustrator" />
 </div>
-
 
 ###
 ## 📫 Let's Connect  
