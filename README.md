@@ -23,13 +23,6 @@ I'm a passionate Front-End Developer with a strong enthusiasm for crafting intui
   />
 </div>
 
-<div align="center">
-  <img 
-    src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=24&pause=1000&color=36BCF7&width=500&lines=Creative+Front-End+Developer;Intuitive+UI%2FUX+Design;Responsive+and+Modern+Layouts;Passionate+about+User+Experience" 
-    alt="Typing SVG" 
-  />
-</div>
-
 ---
 
 ###
