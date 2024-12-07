@@ -74,3 +74,4 @@ I'm a passionate Front-End Developer with a strong enthusiasm for crafting intui
     src="https://raw.githubusercontent.com/platane/snk/output/github-contribution-grid-snake.svg"
   />
 </picture>
+
