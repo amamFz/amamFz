@@ -11,7 +11,8 @@ I'm a passionate Front-End Developer with a strong enthusiasm for crafting intui
 <!--   <img align="right" height="200" src="https://media1.tenor.com/m/Qpa94KC4rmcAAAAd/anime-anime-gif.gif" alt="Anime GIF" />
   <br clear="both"> -->
 
-   ##
+  <!-- 
+  ##
 <div align="left">
 <h3>Last 7 days of coding:</h3>
 
@@ -20,7 +21,8 @@ I'm a passionate Front-End Developer with a strong enthusiasm for crafting intui
 
 </div>
 
-##
+## 
+-->
  
 </div>
 
