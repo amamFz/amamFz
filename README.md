@@ -10,8 +10,19 @@ I'm a passionate Front-End Developer with a strong enthusiasm for crafting intui
   <img src="https://github-readme-stats.vercel.app/api/top-langs?username=amamFz&locale=en&hide_title=false&layout=compact&card_width=320&langs_count=6&theme=dracula&hide_border=false" height="150" alt="Top Languages" /> -->
 <!--   <img align="right" height="200" src="https://media1.tenor.com/m/Qpa94KC4rmcAAAAd/anime-anime-gif.gif" alt="Anime GIF" />
   <br clear="both"> -->
+
+   ##
+<div align="left">
+<h3>Last 7 days of coding:</h3>
+
+[![Harlok's WakaTime stats](https://github-readme-stats.vercel.app/api/wakatime?username=amamFz&layout=compact)](https://wakatime.com/@amamFz)
+
+
 </div>
 
+##
+ 
+</div>
 
 ---
 
