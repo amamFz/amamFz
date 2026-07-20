@@ -1,17 +1,16 @@
 <!-- ═══════════════════════════════════════════════════════════════
-     HEADER BANNER
+     HEADER — native heading (selalu tampil, tidak bergantung layanan luar)
 ════════════════════════════════════════════════════════════════ -->
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,60:1f6feb,100:36BCF7&height=220&section=header&text=Ilham%20Fauzi&fontSize=58&fontColor=ffffff&fontAlignY=36&desc=Front-End%20Developer%20%26%20UI%2FUX%20Designer&descSize=18&descAlignY=56&animation=fadeIn" alt="header" />
-</div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     TYPING ANIMATION
-════════════════════════════════════════════════════════════════ -->
-<div align="center">
-  <a href="https://github.com/amamFz">
-    <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=22&pause=1000&color=36BCF7&center=true&vCenter=true&width=620&lines=Front-End+Developer;UI%2FUX+Designer;Crafting+intuitive+%26+responsive+interfaces;Turning+ideas+into+pixels" alt="typing" />
-  </a>
+# Hi 👋, I'm Ilham Fauzi
+
+### Front-End Developer &amp; UI/UX Designer · Indonesia 🇮🇩
+
+<a href="https://github.com/amamFz">
+  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=22&pause=1000&color=36BCF7&center=true&vCenter=true&width=620&lines=Front-End+Developer;UI%2FUX+Designer;Crafting+intuitive+%26+responsive+interfaces;Turning+ideas+into+pixels" alt="typing" />
+</a>
+
 </div>
 
 <br/>
@@ -70,6 +69,10 @@
 <div align="center">
   <img height="165" src="https://github-readme-stats.vercel.app/api?username=amamFz&show_icons=true&include_all_commits=true&count_private=true&rank_icon=github&hide_border=true&bg_color=0d1117&title_color=36BCF7&icon_color=36BCF7&text_color=9198a1" alt="GitHub Stats" />
   <img height="165" src="https://github-readme-stats.vercel.app/api/top-langs?username=amamFz&layout=compact&langs_count=8&hide_border=true&bg_color=0d1117&title_color=36BCF7&text_color=9198a1" alt="Top Languages" />
+</div>
+
+<div align="center">
+  <img width="820" src="https://github-readme-activity-graph.vercel.app/graph?username=amamFz&bg_color=0d1117&color=36BCF7&line=36BCF7&point=ffffff&area=true&area_color=1f6feb&hide_border=true&custom_title=Contribution%20Activity" alt="Activity Graph" />
 </div>
 
 <div align="center">
