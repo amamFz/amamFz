@@ -1,91 +1,116 @@
-<h2 align="left">Hi <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/Waving%20Hand.png" alt="Waving Hand" width="25" height="25" /> My name is Ilham Fauzi, a Front-End Developer from Indonesia</h2>
-
-I'm a passionate Front-End Developer with a strong enthusiasm for crafting intuitive, responsive, and visually engaging user interfaces. I thrive on using modern front-end technologies and design principles to create seamless user experiences while staying updated with the latest industry trends.
-
-###
-
-
-<div align="left" style="background-color: white;">
-  <img src="https://github-readme-stats.vercel.app/api?username=amamFz&hide_title=false&hide_rank=false&show_icons=true&include_all_commits=true&count_private=true&disable_animations=false&theme=dracula&locale=en&hide_border=false" height="150" alt="GitHub Stats" /> 
-  <img src="https://github-readme-stats.vercel.app/api/top-langs?username=amamFz&locale=en&hide_title=false&layout=compact&card_width=320&langs_count=6&theme=dracula&hide_border=false" height="150" alt="Top Languages" /> 
-  <img align="right" height="200" src="https://media1.tenor.com/m/Qpa94KC4rmcAAAAd/anime-anime-gif.gif" alt="Anime GIF" />
-  <br clear="both">
-
-  <!-- 
-  ##
-<div align="left">
-<h3>Last 7 days of coding:</h3>
-
-[![Harlok's WakaTime stats](https://github-readme-stats.vercel.app/api/wakatime?username=amamFz&layout=compact)](https://wakatime.com/@amamFz)
-
-
+<!-- ═══════════════════════════════════════════════════════════════
+     HEADER BANNER
+════════════════════════════════════════════════════════════════ -->
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,60:1f6feb,100:36BCF7&height=220&section=header&text=Ilham%20Fauzi&fontSize=58&fontColor=ffffff&fontAlignY=36&desc=Front-End%20Developer%20%26%20UI%2FUX%20Designer&descSize=18&descAlignY=56&animation=fadeIn" alt="header" />
 </div>
 
-## 
--->
- 
+<!-- ═══════════════════════════════════════════════════════════════
+     TYPING ANIMATION
+════════════════════════════════════════════════════════════════ -->
+<div align="center">
+  <a href="https://github.com/amamFz">
+    <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=22&pause=1000&color=36BCF7&center=true&vCenter=true&width=620&lines=Front-End+Developer;UI%2FUX+Designer;Crafting+intuitive+%26+responsive+interfaces;Turning+ideas+into+pixels" alt="typing" />
+  </a>
 </div>
 
----
+<br/>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ABOUT — coding style intro
+════════════════════════════════════════════════════════════════ -->
+```json
+{
+  "name": "Ilham Fauzi",
+  "based_in": "Indonesia 🇮🇩",
+  "roles": ["Front-End Developer", "UI/UX Designer"],
+  "focus": "Intuitive, responsive & visually engaging interfaces",
+  "mindset": "design principles + modern front-end tech",
+  "currently": "leveling up and shipping delightful UI"
+}
+```
+
+<br/>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TECH STACK
+════════════════════════════════════════════════════════════════ -->
+## &nbsp;🛠️&nbsp; Tech Stack
 
 <div align="center">
-  <img 
-    src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=24&pause=1000&color=36BCF7&width=500&lines=Creative+Front-End+Developer;Intuitive+UI%2FUX+Design;Responsive+and+Modern+Layouts;Passionate+about+User+Experience" 
-    alt="Typing SVG" 
-  />
+
+<table>
+  <tr>
+    <td align="center"><b>Languages</b></td>
+    <td align="center"><img src="https://skillicons.dev/icons?i=html,css,js,ts&theme=dark" height="42" alt="languages" /></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Frameworks</b></td>
+    <td align="center"><img src="https://skillicons.dev/icons?i=react,nextjs,vue,materialui&theme=dark" height="42" alt="frameworks" /></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Styling &amp; DB</b></td>
+    <td align="center"><img src="https://skillicons.dev/icons?i=tailwind,sass,mysql&theme=dark" height="42" alt="styling" /></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Design &amp; Tools</b></td>
+    <td align="center"><img src="https://skillicons.dev/icons?i=figma,ai,git,github,vscode&theme=dark" height="42" alt="tools" /></td>
+  </tr>
+</table>
+
 </div>
 
----
+<br/>
 
-###
-## 🛠️ Technologies & Tools  
+<!-- ═══════════════════════════════════════════════════════════════
+     GITHUB STATS
+════════════════════════════════════════════════════════════════ -->
+## &nbsp;📊&nbsp; GitHub Stats
 
-<div align="left">
-  <img src="https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white&style=for-the-badge" height="30" alt="HTML5" />
-  <img src="https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white&style=for-the-badge" height="30" alt="CSS3" />
-  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black&style=for-the-badge" height="30" alt="JavaScript" />
-  <img src="https://img.shields.io/badge/Tailwind CSS-06B6D4?logo=tailwindcss&logoColor=black&style=for-the-badge" height="30" alt="Tailwind CSS" />
-  <img src="https://img.shields.io/badge/Sass-CC6699?logo=sass&logoColor=black&style=for-the-badge" height="30" alt="Sass" />
-  <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white&style=for-the-badge" height="30" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/Vue.js-4FC08D?logo=vuedotjs&logoColor=black&style=for-the-badge" height="30" alt="Vue.js" />
-  <img src="https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black&style=for-the-badge" height="30" alt="React" />
-  <img src="https://img.shields.io/badge/Next.js-000000?logo=nextdotjs&logoColor=white&style=for-the-badge" height="30" alt="Next.js" />
-  <img src="https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=white&style=for-the-badge" height="30" alt="MySQL" />
-  <img src="https://img.shields.io/badge/MUI-007FFF?logo=mui&logoColor=white&style=for-the-badge" height="30" alt="Material UI" />
-  <img src="https://img.shields.io/badge/Git-F05032?logo=git&logoColor=white&style=for-the-badge" height="30" alt="Git" />
-  <img src="https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white&style=for-the-badge" height="30" alt="GitHub" />
-  <img src="https://img.shields.io/badge/Figma-F24E1E?logo=figma&logoColor=white&style=for-the-badge" height="30" alt="Figma" />
-  <img src="https://img.shields.io/badge/Visual Studio Code-007ACC?logo=visualstudiocode&logoColor=white&style=for-the-badge" height="30" alt="VSCode" />
-  <img src="https://img.shields.io/badge/Adobe Illustrator-FF9A00?logo=adobeillustrator&logoColor=black&style=for-the-badge" height="30" alt="Adobe Illustrator" />
+<div align="center">
+  <img height="165" src="https://github-readme-stats.vercel.app/api?username=amamFz&show_icons=true&include_all_commits=true&count_private=true&rank_icon=github&hide_border=true&bg_color=0d1117&title_color=36BCF7&icon_color=36BCF7&text_color=9198a1" alt="GitHub Stats" />
+  <img height="165" src="https://github-readme-stats.vercel.app/api/top-langs?username=amamFz&layout=compact&langs_count=8&hide_border=true&bg_color=0d1117&title_color=36BCF7&text_color=9198a1" alt="Top Languages" />
 </div>
 
-###
-## 📫 Let's Connect  
-
-<div align="left">
-  <a href="https://www.instagram.com/_uzii.cipher/" target="_blank"><img src="https://img.shields.io/static/v1?message=Instagram&logo=instagram&label=&color=E4405F&logoColor=white&labelColor=&style=for-the-badge" height="35" alt="Instagram" /></a>
-<!--   <a href="https://discordapp.com/users/yourID" target="_blank"><img src="https://img.shields.io/static/v1?message=Discord&logo=discord&label=&color=7289DA&logoColor=white&labelColor=&style=for-the-badge" height="35" alt="Discord" /></a> -->
-  <a href="mailto:if72322322@gmail.com"><img src="https://img.shields.io/static/v1?message=Gmail&logo=gmail&label=&color=D14836&logoColor=white&labelColor=&style=for-the-badge" height="35" alt="Gmail" /></a>
-  <a href="https://www.linkedin.com/in/ilham-fauzi-0823a6298/" target="_blank"><img src="https://img.shields.io/static/v1?message=LinkedIn&logo=linkedin&label=&color=0077B5&logoColor=white&labelColor=&style=for-the-badge" height="35" alt="LinkedIn" /></a>
+<div align="center">
+  <img src="https://streak-stats.demolab.com?user=amamFz&hide_border=true&background=0d1117&ring=36BCF7&fire=36BCF7&currStreakLabel=36BCF7&stroke=36BCF7&currStreakNum=e6edf3&sideNums=e6edf3&dates=9198a1&sideLabels=9198a1&dayNums=9198a1" alt="GitHub Streak" />
 </div>
 
-###
+<div align="center">
+  <img src="https://github-profile-trophy.vercel.app/?username=amamFz&theme=onedark&no-frame=true&no-bg=true&column=7&margin-w=6&margin-h=6" alt="Trophies" />
+</div>
 
-<br clear="both">
+<br/>
 
+<!-- ═══════════════════════════════════════════════════════════════
+     CONNECT
+════════════════════════════════════════════════════════════════ -->
+## &nbsp;📫&nbsp; Let's Connect
 
-<picture align="center">
-  <source
-    media="(prefers-color-scheme: dark)"
-    srcset="https://raw.githubusercontent.com/platane/snk/output/github-contribution-grid-snake-dark.svg"
-  />
-  <source
-    media="(prefers-color-scheme: light)"
-    srcset="https://raw.githubusercontent.com/platane/snk/output/github-contribution-grid-snake.svg"
-  />
-  <img
-    alt="github contribution grid snake animation"
-    src="https://raw.githubusercontent.com/platane/snk/output/github-contribution-grid-snake.svg"
-  />
-</picture>
+<div align="center">
+  <a href="https://www.linkedin.com/in/ilham-fauzi-0823a6298/" target="_blank"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?logo=linkedin&logoColor=white&style=for-the-badge" height="34" alt="LinkedIn" /></a>
+  <a href="https://www.instagram.com/_uzii.cipher/" target="_blank"><img src="https://img.shields.io/badge/Instagram-E4405F?logo=instagram&logoColor=white&style=for-the-badge" height="34" alt="Instagram" /></a>
+  <a href="mailto:if72322322@gmail.com"><img src="https://img.shields.io/badge/Gmail-EA4335?logo=gmail&logoColor=white&style=for-the-badge" height="34" alt="Gmail" /></a>
+</div>
 
+<br/>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CONTRIBUTION SNAKE
+════════════════════════════════════════════════════════════════ -->
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/platane/snk/output/github-contribution-grid-snake-dark.svg" />
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/platane/snk/output/github-contribution-grid-snake.svg" />
+    <img alt="contribution snake" src="https://raw.githubusercontent.com/platane/snk/output/github-contribution-grid-snake.svg" />
+  </picture>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════════════ -->
+<div align="center">
+  <img src="https://komarev.com/ghpvc/?username=amamFz&color=36BCF7&style=flat-square&label=Profile+Views" alt="views" />
+</div>
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:36BCF7,40:1f6feb,100:0d1117&height=120&section=footer" alt="footer" />
