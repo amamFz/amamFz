@@ -5,11 +5,17 @@
 
 # Hi 👋, I'm Ilham Fauzi
 
-### Front-End Developer &amp; UI/UX Designer · Indonesia 🇮🇩
+### 💻 Front-End Developer &nbsp;·&nbsp; 🎨 UI/UX Designer &nbsp;·&nbsp; Indonesia 🇮🇩
 
 <a href="https://github.com/amamFz">
-  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=22&pause=1000&color=36BCF7&center=true&vCenter=true&width=620&lines=Front-End+Developer;UI%2FUX+Designer;Crafting+intuitive+%26+responsive+interfaces;Turning+ideas+into+pixels" alt="typing" />
+  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=22&pause=1000&color=36BCF7&center=true&vCenter=true&width=640&lines=Front-End+Developer;UI%2FUX+Designer;Designing+%26+building+delightful+interfaces;Turning+ideas+into+pixels+%26+code" alt="typing" />
 </a>
+
+<p>
+  <img src="https://img.shields.io/badge/Front--End_Developer-36BCF7?style=flat-square&logoColor=white" alt="role-fe" />
+  <img src="https://img.shields.io/badge/UI%2FUX_Designer-1f6feb?style=flat-square" alt="role-uiux" />
+  <img src="https://komarev.com/ghpvc/?username=amamFz&color=36BCF7&style=flat-square&label=Profile+Views" alt="views" />
+</p>
 
 </div>
 
@@ -28,6 +34,17 @@
   "currently": "leveling up and shipping delightful UI"
 }
 ```
+
+<br/>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     WHAT I DO
+════════════════════════════════════════════════════════════════ -->
+## &nbsp;💡&nbsp; What I Do
+
+- 🎨 &nbsp;**UI/UX Design** — wireframing, prototyping & design systems in Figma
+- 💻 &nbsp;**Front-End Development** — responsive, accessible UIs with React, Next.js & Vue
+- ⚡ &nbsp;**Design → Code** — turning clean designs into pixel-perfect, modern interfaces
 
 <br/>
 
@@ -112,8 +129,4 @@
 <!-- ═══════════════════════════════════════════════════════════════
      FOOTER
 ════════════════════════════════════════════════════════════════ -->
-<div align="center">
-  <img src="https://komarev.com/ghpvc/?username=amamFz&color=36BCF7&style=flat-square&label=Profile+Views" alt="views" />
-</div>
-
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:36BCF7,40:1f6feb,100:0d1117&height=120&section=footer" alt="footer" />
