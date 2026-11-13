@@ -15,11 +15,31 @@
     "email": "if72322322@gmail.com",
     "github": "https://github.com/amamFz"
   },
-  "stack": [
-    "HTML", "CSS", "JavaScript", "TypeScript",
-    "React", "Next.js", "Vue", "Material UI",
-    "Tailwind CSS", "Sass", "MySQL",
-    "Figma", "Illustrator", "Git", "GitHub", "VS Code"
-  ],
+  "stack": {
+    "Languages": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "TypeScript"
+    ],
+    "Frameworks": [
+      "React",
+      "Next.js",
+      "Vue",
+      "Material UI"
+    ],
+    "Styling & DB": [
+      "Tailwind CSS",
+      "Sass",
+      "MySQL"
+    ],
+    "Design & Tools": [
+      "Figma",
+      "Illustrator",
+      "Git",
+      "GitHub",
+      "VS Code"
+    ]
+  },
   "accent": "#36BCF7"
 }
