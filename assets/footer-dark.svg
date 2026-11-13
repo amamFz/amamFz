@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="230" viewBox="0 0 900 230" role="img" aria-label="Let's build something great together. ilhamfauzicom21@gmail.com">
+  <title>Let's build something great together. — ilhamfauzicom21@gmail.com</title>
+  <defs>
+    <radialGradient id="ft-glow" cx="82%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#36BCF7" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#36BCF7" stop-opacity="0"/>
+    </radialGradient>
+    <style>
+      .bob { animation: bob 5s ease-in-out infinite; }
+      @keyframes bob { 50% { transform: translateY(-5px); } }
+      @media (prefers-reduced-motion: reduce) { .bob { animation: none; } }
+    </style>
+  </defs>
+  <rect x="0.5" y="0.5" width="899" height="229" rx="18" fill="#0d1117" stroke="#30363d"/>
+  <rect x="1" y="1" width="898" height="228" rx="18" fill="url(#ft-glow)"/>
+  <text x="44" y="66" font-family="'JetBrains Mono', 'SF Mono', Consolas, 'DejaVu Sans Mono', monospace" font-size="15" fill="#36BCF7">// get in touch</text>
+  <text x="44" y="106" font-family="'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="30" font-weight="800" fill="#e6edf3">Let's build something great together.</text>
+  <text x="44" y="136" font-family="'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="16" fill="#8b949e">Open to collaboration, projects and new opportunities. Feel free to reach out!</text>
+  <g transform="translate(44 156)">
+    <rect width="331" height="44" rx="22" fill="#36BCF7" fill-opacity="0.14" stroke="#36BCF7" stroke-opacity="0.55"/>
+    <g transform="translate(16 10)" fill="none" stroke="#36BCF7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.8 6.5 12 13l8.2-6.5"/></g>
+    <text x="50" y="28" font-family="'JetBrains Mono', 'SF Mono', Consolas, 'DejaVu Sans Mono', monospace" font-size="17" font-weight="600" fill="#e6edf3">ilhamfauzicom21@gmail.com</text>
+  </g>
+  <g class="bob"><path d="M700 86l26 -15.079999999999998l26 15.079999999999998l-26 15.079999999999998z" fill="#36bcf7"/><path d="M700 86l26 15.079999999999998v29.9l-26 -15.079999999999998z" fill="#2787b2"/><path d="M726 101.08l26 -15.079999999999998v29.9l-26 15.079999999999998z" fill="#1c6280"/><path d="M752 116l20 -11.6l20 11.6l-20 11.6z" fill="#26789d"/><path d="M752 116l20 11.6v23.0l-20 -11.6z" fill="#1b5671"/><path d="M772 127.6l20 -11.6v23.0l-20 11.6z" fill="#143e52"/><path d="M668 140l16 -9.28l16 9.28l-16 9.28z" fill="#1d5571"/><path d="M668 140l16 9.28v18.4l-16 -9.28z" fill="#153d51"/><path d="M684 149.28l16 -9.28v18.4l-16 9.28z" fill="#0f2c3b"/><path d="M790 64l14 -8.12l14 8.12l-14 8.12z" fill="#2e9aca"/><path d="M790 64l14 8.12v16.099999999999998l-14 -8.12z" fill="#216f91"/><path d="M804 72.12l14 -8.12v16.099999999999998l-14 8.12z" fill="#185069"/></g>
+</svg>
