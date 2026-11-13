@@ -563,9 +563,80 @@ def stack_sketch(p, c):
     return svg_doc(W, H, label, fonts, defs, bg + "".join(parts))
 
 
+def hero_sketch(p, c):
+    W, H = 1200, 340
+    fonts = sketch.Fonts()
+    pen = sketch.Pen(seed=5, ink=c["ink"])
+    parts = []
+    X = 70
+
+    # sapaan kecil + ombak
+    hi = "hi there, I'm"
+    parts.append(fonts.text("note", hi, X + 4, 84, 26, c["ink2"]))
+    parts.append(pen.squiggle(X + 8 + fonts.width("note", hi, 26) + 10, 76, 34, amp=4, waves=2, color=c["accent_text"], width=2))
+
+    # nama besar dengan stabilo + garis bawah yang "digambar"
+    name = p["name"]
+    nw = fonts.width("hand", name, 104)
+    parts.append(pen.highlight(X - 8, 160, nw + 18, 34, c["accent"], opacity=0.36 if c["dark"] else 0.30))
+    parts.append(fonts.text("hand", name, X, 176, 104, c["ink"]))
+    parts.append(f'<g class="draw">{pen.underline(X + 4, 198, nw * 0.62, color=c["accent_text"], width=3, loops=True)}</g>')
+    parts.append(pen.star(X + nw + 30, 104, 14, color=c["accent_text"], width=2.2))
+    parts.append(pen.sparkle(X + nw + 58, 136, 8, color=c["ink2"]))
+
+    # tagline + lokasi
+    parts.append(fonts.text("hand", p["tagline"], X + 2, 256, 36, c["ink2"]))
+    pin_x, pin_y = X + 10, 294
+    parts.append(pen.ellipse(pin_x, pin_y - 4, 6, 6, passes=1, color=c["accent_text"], width=2))
+    parts.append(pen.line(pin_x, pin_y + 2, pin_x, pin_y + 10, passes=1, color=c["accent_text"], width=2))
+    parts.append(fonts.text("note", f'based in {p["location"]}', pin_x + 16, pin_y + 6, 22, c["ink2"]))
+
+    # kanan: wireframe coretan → kode
+    gx, gy, gw, gh = 860, 66, 280, 200
+    wf = [pen.box(gx, gy, gw, gh, r=12, color=c["ink"], width=1.8, fill=c["paper"]),
+          pen.line(gx + 4, gy + 32, gx + gw - 4, gy + 32, color=c["ink"], width=1.5)]
+    for i, col in enumerate(("#ff5f57", "#febc2e", "#28c840")):
+        wf.append(f'<circle cx="{gx + 20 + i * 17}" cy="{gy + 17}" r="5" fill="{col}"/>')
+        wf.append(pen.ellipse(gx + 20 + i * 17, gy + 17, 5.5, 5.5, passes=1, color=c["ink"], width=1.1))
+    # gambar placeholder dengan arsiran + gunung
+    ix, iy, iw, ih = gx + 20, gy + 50, 104, 80
+    wf.append(f'<clipPath id="img"><rect x="{ix}" y="{iy}" width="{iw}" height="{ih}" rx="6"/></clipPath>')
+    wf.append(pen.hachure(ix, iy, iw, ih, c["accent"], gap=7, opacity=0.55, clip_id="img"))
+    wf.append(pen.box(ix, iy, iw, ih, r=6, color=c["ink"], width=1.5))
+    wf.append(f'<path d="M{ix + 18} {iy + 62}l22-26 16 16 12-10 20 20" fill="none" stroke="{c["ink"]}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>')
+    wf.append(pen.ellipse(ix + 80, iy + 22, 7, 7, passes=1, color=c["ink"], width=1.6))
+    # baris teks sebagai coretan + tombol
+    tx = gx + 142
+    wf.append(pen.line(tx, gy + 60, tx + 112, gy + 60, color=c["ink"], width=3))
+    wf.append(pen.squiggle(tx, gy + 82, 90, amp=2, waves=4, color=c["ink2"], width=1.6))
+    wf.append(pen.squiggle(tx, gy + 100, 104, amp=2, waves=5, color=c["ink2"], width=1.6))
+    bx, by = tx, gy + 116
+    wf.append(f'<clipPath id="btn"><rect x="{bx}" y="{by}" width="74" height="26" rx="13"/></clipPath>')
+    wf.append(pen.hachure(bx, by, 74, 26, c["accent"], gap=4, width=1.6, opacity=0.9, clip_id="btn"))
+    wf.append(pen.box(bx, by, 74, 26, r=13, color=c["ink"], width=1.5))
+    wf.append(fonts.text("note", "</> code", gx + 22, gy + 170, 22, c["accent_text"]))
+    wf.append(pen.squiggle(gx + 120, gy + 164, 130, amp=2, waves=6, color=c["ink2"], width=1.4))
+    parts.append(f'<g class="float">{"".join(wf)}</g>')
+
+    # anotasi tangan
+    parts.append(fonts.text("hand", "design", 748, 92, 30, c["accent_text"]))
+    parts.append(pen.arrow(790, 102, 852, 130, curve=-22, color=c["accent_text"], width=2))
+    parts.append(fonts.text("note", "pixels -> code", 726, 300, 22, c["ink2"]))
+    parts.append(pen.arrow(840, 290, 900, 272, curve=14, color=c["ink2"], width=1.6))
+    parts.append(pen.spiral(1150, 300, 11, color=c["ink2"], width=1.4))
+
+    # tanpa animasi pun garis tetap tampil; efek "digambar" hanya lewat keyframes
+    css = (".draw path{animation:draw 1.8s .3s ease-out backwards}"
+           "@keyframes draw{from{stroke-dasharray:900;stroke-dashoffset:900}to{stroke-dasharray:900;stroke-dashoffset:0}}"
+           ".float{animation:float 6s ease-in-out infinite}@keyframes float{50%{transform:translateY(-6px)}}"
+           "@media (prefers-reduced-motion:reduce){.draw path,.float{animation:none}}")
+    defs, bg = paper(W, H, c, pen, fonts)
+    return svg_doc(W, H, f'{p["name"]} — {p["tagline"]}', fonts, defs, bg + "".join(parts), css)
+
+
 # Tiap builder mengembalikan {nama_file_tanpa_tema: isi_svg}.
 BUILDERS = [
-    lambda p, c: {"hero": hero(p, c)},
+    lambda p, c: {"hero": hero_sketch(p, c)},
     buttons,
     lambda p, c: {"stack": stack_sketch(p, c)},
     lambda p, c: {"footer": footer(p, c)},
