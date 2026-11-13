@@ -18,8 +18,10 @@ sys.path.insert(0, str(ROOT))
 
 import build  # noqa: E402  (generator yang sama dengan aset di repo)
 
-CACHE_OK = "public, max-age=1800, s-maxage=3600, stale-while-revalidate=86400"
-CACHE_ERR = "public, max-age=60, s-maxage=300"
+# max-age=0: browser & cache gambar GitHub (camo) selalu cek ulang;
+# s-maxage=300: CDN Vercel menyimpan 5 menit, jadi GitHub API dipanggil paling sering ~12x/jam.
+CACHE_OK = "public, max-age=0, must-revalidate, s-maxage=300, stale-while-revalidate=60"
+CACHE_ERR = "public, max-age=0, must-revalidate, s-maxage=60"
 
 
 def render(theme):

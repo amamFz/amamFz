@@ -1,8 +1,8 @@
 name: Update profile README
 
+# Kalender kontribusi disajikan live dari Vercel (lihat calendar_url di profile.json),
+# jadi workflow ini cukup jalan saat data/desain profil berubah: tanpa jadwal harian.
 on:
-  schedule:
-    - cron: "23 2 * * *"   # tiap hari 02:23 UTC (09:23 WIB)
   workflow_dispatch:         # bisa dijalankan manual dari tab Actions
   push:
     branches: [main]
@@ -25,7 +25,7 @@ jobs:
       - name: Install font tools
         run: pip install -r requirements.txt
 
-      - name: Build assets, calendar and README
+      - name: Build assets and README
         env:
           # PROFILE_TOKEN (opsional) = personal access token agar kontribusi privat ikut dihitung.
           GITHUB_TOKEN: ${{ secrets.PROFILE_TOKEN || secrets.GITHUB_TOKEN }}
@@ -33,12 +33,13 @@ jobs:
 
       - name: Commit if changed
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # commit atas nama pemilik repo, supaya bot tidak muncul di daftar Contributors
+          git config user.name "Ilham Fauzi"
+          git config user.email "122434192+amamFz@users.noreply.github.com"
           git add assets README.md
           if git diff --cached --quiet; then
             echo "Tidak ada perubahan."
           else
-            git commit -m "chore: update contribution calendar"
+            git commit -m "Rebuild profile assets from profile.json"
             git push
           fi

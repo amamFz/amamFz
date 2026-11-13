@@ -1039,6 +1039,11 @@ def main():
     # Kalender: hanya ditulis ulang bila ada data (token tersedia), supaya build lokal
     # tanpa token tidak menimpa kalender asli. Jika belum ada, buat placeholder.
     import os
+    if p.get("calendar_url") and not os.environ.get("CALENDAR_OUT"):
+        # kalender disajikan langsung (live) dari calendar_url, tidak perlu disimpan di repo
+        print("skip calendar: disajikan live dari", p["calendar_url"])
+        write_readme(p)
+        return
     weeks = fetch_contributions(p["github_user"])
     cal_dir = pathlib.Path(os.environ.get("CALENDAR_OUT", ASSETS))
     for theme_name, c in themes(p["accent"]).items():
