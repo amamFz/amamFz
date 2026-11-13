@@ -1,0 +1,25 @@
+{
+  "name": "ILHAM FAUZI",
+  "tagline": "Front-End Developer · UI/UX Designer",
+  "location": "Indonesia",
+  "github_user": "amamFz",
+  "bio": "Front-End Developer & UI/UX Designer from Indonesia, crafting intuitive, responsive and visually engaging interfaces by blending design principles with modern front-end tech.",
+  "education": {
+    "school": "SMK 1 Ciamis",
+    "major": "Rekayasa Perangkat Lunak",
+    "years": "2022 – 2025"
+  },
+  "links": {
+    "portfolio": "https://ilham-portfolio.framer.website/",
+    "linkedin": "https://www.linkedin.com/in/ilham-fauzi-0823a6298/",
+    "email": "if72322322@gmail.com",
+    "github": "https://github.com/amamFz"
+  },
+  "stack": [
+    "HTML", "CSS", "JavaScript", "TypeScript",
+    "React", "Next.js", "Vue", "Material UI",
+    "Tailwind CSS", "Sass", "MySQL",
+    "Figma", "Illustrator", "Git", "GitHub", "VS Code"
+  ],
+  "accent": "#36BCF7"
+}
