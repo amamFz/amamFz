@@ -22,7 +22,7 @@
 
 <br/><br/>
 
-<picture><source media="(prefers-color-scheme: dark)" srcset="assets/calendar-dark.svg"><source media="(prefers-color-scheme: light)" srcset="assets/calendar-light.svg"><img src="assets/calendar-dark.svg" alt="Contribution calendar" width="100%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="https://profileamamfz.vercel.app/api/contrib?theme=dark"><source media="(prefers-color-scheme: light)" srcset="https://profileamamfz.vercel.app/api/contrib?theme=light"><img src="https://profileamamfz.vercel.app/api/contrib?theme=dark" alt="Contribution calendar" width="100%"></picture>
 
 <br/><br/>
 
