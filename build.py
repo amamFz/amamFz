@@ -659,6 +659,126 @@ def buttons_sketch(p, c):
     return {f"btn-{k}": button_sketch(k, c) for k in BUTTON_LABELS}
 
 
+def calendar_sketch(p, c, weeks):
+    """Kalender isometrik 3D bergaya coretan: balok bergaris tinta di atas kertas."""
+    import datetime
+    W, H, PAD = 900, 470, 40
+    UX, UY = 13.0, -4.0
+    VX, VY = 10.0, 6.5
+    OX, OY = 92.0, 346.0
+    FILL, HMAX = 0.80, 64.0
+    fonts = sketch.Fonts()
+    pen = sketch.Pen(seed=3, ink=c["ink"])
+    dark = c["dark"]
+    empty = mix(c["paper"], c["ink"], 0.10 if dark else 0.07)
+    lv = [empty] + [mix(c["paper"], c["accent"], k) for k in (0.40, 0.62, 0.82, 1.0)]
+    side_l, side_r = (0.70, 0.50) if dark else (0.86, 0.70)
+    outline = mix(c["paper"], c["ink"], 0.55 if dark else 0.75)
+
+    def pt(w, d, z=0.0):
+        return OX + w * UX + d * VX, OY + w * UY + d * VY - z
+
+    def face(points, fill, stroke=True):
+        d = "M" + "L".join(f"{x + pen.j(0.35):.1f} {y + pen.j(0.35):.1f}" for x, y in points) + "Z"
+        st = f' stroke="{outline}" stroke-width="0.9" stroke-linejoin="round"' if stroke else ""
+        return f'<path d="{d}" fill="{fill}"{st}/>'
+
+    cells, stats, peak = [], None, None
+    if weeks:
+        weeks = weeks[-53:]
+        days = [d for w in weeks for d in w]
+        counts = sorted(d["count"] for d in days if d["count"])
+        cap = counts[int(len(counts) * 0.95) - 1] if counts else 1
+        cur, best = streaks(days)
+        stats = (sum(d["count"] for d in days), cur, best)
+        for wi, w in enumerate(weeks):
+            for d in w:
+                wd = (datetime.date.fromisoformat(d["date"]).weekday() + 1) % 7
+                cells.append((wi, wd, d["level"], d["count"], d["date"]))
+        top = max(cells, key=lambda e: e[3])
+        peak = top
+    else:
+        cap = 1
+        cells = [(wi, wd, 0, 0, None) for wi in range(53) for wd in range(7)]
+
+    cells.sort(key=lambda e: (UY * e[0] + VY * e[1], e[0]))
+    m = (1 - FILL) / 2
+    blocks = []
+    for w, d, level, count, date in cells:
+        h = 2.0 if not count else 5 + HMAX * min(count, cap) / cap
+        a, b, e, f = w + m, w + 1 - m, d + m, d + 1 - m
+        col = lv[level]
+        tip = f"<title>{date}: {count}</title>" if date else ""
+        if not count:
+            blocks.append(face([pt(a, e, h), pt(b, e, h), pt(b, f, h), pt(a, f, h)], col, stroke=False))
+            continue
+        blocks.append("<g>" + tip
+                      + face([pt(a, e), pt(a, f), pt(a, f, h), pt(a, e, h)], mix("#000000", col, side_l))
+                      + face([pt(a, f), pt(b, f), pt(b, f, h), pt(a, f, h)], mix("#000000", col, side_r))
+                      + face([pt(a, e, h), pt(b, e, h), pt(b, f, h), pt(a, f, h)], col) + "</g>")
+
+    parts = []
+    # judul
+    title = "Contributions"
+    tw = fonts.width("hand", title, 44)
+    parts.append(pen.highlight(PAD - 6, 58, tw + 14, 18, c["accent"], opacity=0.38 if dark else 0.32))
+    parts.append(fonts.text("hand", title, PAD, 68, 44, c["ink"]))
+    parts.append(pen.sparkle(PAD + tw + 22, 44, 8, color=c["accent_text"]))
+
+    # statistik sebagai catatan tangan
+    if stats:
+        total, cur, best = stats
+        num = f"{total:,}"
+        nw = fonts.width("hand", num, 46)
+        parts.append(fonts.text("hand", num, PAD + 4, 134, 46, c["accent_text"]))
+        parts.append(pen.ellipse(PAD + 4 + nw / 2, 120, nw / 2 + 16, 26, color=c["accent_text"], width=1.8))
+        parts.append(fonts.text("note", "contributions this year", PAD + nw + 30, 128, 21, c["ink2"]))
+        parts.append(fonts.text("hand", f"{cur} day streak", PAD + 4, 182, 30, c["ink"]))
+        parts.append(pen.squiggle(PAD + 4, 192, fonts.width("hand", f"{cur} day streak", 30), amp=2, waves=4,
+                                  color=c["accent_text"], width=1.6))
+        parts.append(fonts.text("note", f"longest: {best} days", PAD + 4, 222, 21, c["ink2"]))
+        # anotasi hari terbaik
+        w, d, _, count, date = peak
+        h = 5 + HMAX * min(count, cap) / cap
+        tx, ty = pt(w + 0.5, d + 0.5, h)
+        label = f"best day! ({count})"
+        lw = fonts.width("note", label, 21)
+        ly0 = max(ty - 44, 34)
+        if tx + 30 + lw < W - PAD:          # label di kanan atas balok
+            lx = tx + 30
+            parts.append(pen.arrow(lx - 2, ly0 + 2, tx + 4, ty - 6, curve=10, color=c["accent_text"], width=1.8, head=8))
+        else:                               # tidak muat: di kiri atas balok
+            lx = tx - 30 - lw
+            parts.append(pen.arrow(lx + lw + 2, ly0 + 2, tx - 4, ty - 6, curve=-10, color=c["accent_text"], width=1.8, head=8))
+        parts.append(fonts.text("note", label, lx, ly0 + 6, 21, c["accent_text"]))
+        # label bulan
+        last = None
+        for wi, wk in enumerate(weeks):
+            mname = datetime.date.fromisoformat(wk[0]["date"]).strftime("%b")
+            if mname != last and wi < 51:
+                x, y = pt(wi + 0.2, 7.7)
+                parts.append(f'<g transform="translate({x:.1f} {y + 14:.1f}) rotate(-17.1)">'
+                             + fonts.text("note", mname, 0, 0, 16, c["ink2"]) + "</g>")
+                last = mname
+        foot = "drawn fresh every day by GitHub Actions"
+    else:
+        parts.append(fonts.text("hand", "waiting for the first sync...", PAD + 4, 134, 32, c["ink2"]))
+        parts.append(pen.arrow(PAD + 120, 150, PAD + 170, 230, curve=20, color=c["ink2"], width=1.8))
+        foot = "updated automatically by GitHub Actions"
+
+    ly = H - 34
+    parts.append(fonts.text("note", foot, PAD, ly + 12, 18, c["ink2"]))
+    lx0 = W - PAD - 150
+    parts.append(fonts.text("note", "less", lx0, ly + 12, 18, c["ink2"]))
+    for i in range(5):
+        parts.append(pen.box(lx0 + 34 + i * 18, ly, 13, 13, r=3, passes=1, color=outline, width=1, fill=lv[i], wobble=0.5))
+    parts.append(fonts.text("note", "more", lx0 + 128, ly + 12, 18, c["ink2"]))
+
+    defs, bg = paper(W, H, c, pen, fonts)
+    return svg_doc(W, H, f'3D contribution calendar for {p["github_user"]}', fonts, defs,
+                   bg + "".join(blocks) + "".join(parts))
+
+
 # Tiap builder mengembalikan {nama_file_tanpa_tema: isi_svg}.
 BUILDERS = [
     lambda p, c: {"hero": hero_sketch(p, c)},
@@ -744,7 +864,7 @@ def main():
     for theme_name, c in themes(p["accent"]).items():
         out = cal_dir / f"calendar-{theme_name}.svg"
         if weeks or not out.exists():
-            style = calendar_3d if p.get("calendar_style", "3d") == "3d" else calendar_flat
+            style = {"3d": calendar_sketch, "3d-solid": calendar_3d, "flat": calendar_flat}[p.get("calendar_style", "3d")]
             out.write_text(style(p, c, weeks), encoding="utf-8")
             print("wrote", out, "(data)" if weeks else "(placeholder)")
         else:
