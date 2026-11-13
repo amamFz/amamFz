@@ -779,12 +779,60 @@ def calendar_sketch(p, c, weeks):
                    bg + "".join(blocks) + "".join(parts))
 
 
+def footer_sketch(p, c):
+    W, H, PAD = 900, 260, 44
+    fonts = sketch.Fonts()
+    pen = sketch.Pen(seed=21, ink=c["ink"])
+    email = p["links"]["email"]
+    parts = [fonts.text("note", "// get in touch", PAD, 62, 22, c["accent_text"])]
+
+    cta = p["footer"]["cta"]
+    cw = fonts.width("hand", cta, 42)
+    parts.append(pen.highlight(PAD - 6, 102, cw + 12, 16, c["accent"], opacity=0.36 if c["dark"] else 0.30))
+    parts.append(fonts.text("hand", cta, PAD, 110, 42, c["ink"]))
+    parts.append(fonts.text("note", p["footer"]["sub"], PAD, 146, 20, c["ink2"]))
+
+    # email dalam pill coretan berarsir
+    ew = fonts.width("hand", email, 28)
+    bx, by, bw, bh = PAD, 170, ew + 72, 50
+    parts.append(f'<clipPath id="mail"><rect x="{bx}" y="{by}" width="{bw}" height="{bh}" rx="25"/></clipPath>')
+    parts.append(pen.box(bx, by, bw, bh, r=25, passes=0, fill=c["paper"]))
+    parts.append(pen.hachure(bx, by, bw, bh, c["accent"], gap=7, width=1.2, opacity=0.35, clip_id="mail"))
+    parts.append(pen.box(bx, by, bw, bh, r=25, color=c["ink"], width=1.7))
+    parts.append(f'<g transform="translate({bx + 18} {by + 13})" fill="none" stroke="{c["ink"]}" stroke-width="2" '
+                 f'stroke-linecap="round" stroke-linejoin="round">{ICONS["email"]}</g>')
+    parts.append(fonts.text("hand", email, bx + 54, by + 34, 28, c["ink"]))
+    parts.append(fonts.text("note", "say hi!", bx + bw + 52, by + 33, 20, c["ink2"]))
+    parts.append(pen.arrow(bx + bw + 46, by + 27, bx + bw + 12, by + 24, curve=6, color=c["ink2"], width=1.6, head=7))
+
+    # pesawat kertas + jejak putus-putus
+    trail = (f'<path d="M560 214C610 226 640 190 616 168C596 150 572 178 600 190C650 212 700 150 738 94" fill="none" '
+             f'stroke="{c["ink2"]}" stroke-width="1.8" stroke-dasharray="6 8" stroke-linecap="round"/>')
+    px, py = 742, 58
+    plane = [f'<path d="M{px} {py + 30}L{px + 86} {py}L{px + 58} {py + 74}L{px + 38} {py + 48}Z" fill="{c["paper"]}"/>',
+             f'<path d="M{px + 38} {py + 48}L{px + 86} {py}L{px + 34} {py + 64}Z" fill="{c["accent"]}" fill-opacity="0.45"/>']
+    for a, b in [((0, 30), (86, 0)), ((86, 0), (58, 74)), ((58, 74), (38, 48)), ((38, 48), (0, 30)),
+                 ((38, 48), (86, 0)), ((38, 48), (34, 64)), ((34, 64), (46, 54))]:
+        plane.append(pen.line(px + a[0], py + a[1], px + b[0], py + b[1], color=c["ink"], width=1.8, bow=0.8))
+    parts.append(trail)
+    parts.append(f'<g class="fly">{"".join(plane)}</g>')
+    parts.append(pen.sparkle(706, 70, 7, color=c["accent_text"]))
+    parts.append(pen.star(850, 180, 9, color=c["accent_text"]))
+    parts.append(pen.sparkle(820, 222, 5, color=c["ink2"], width=1.4))
+
+    css = (".fly{animation:fly 5s ease-in-out infinite}"
+           "@keyframes fly{50%{transform:translate(4px,-6px)}}"
+           "@media (prefers-reduced-motion:reduce){.fly{animation:none}}")
+    defs, bg = paper(W, H, c, pen, fonts)
+    return svg_doc(W, H, f'{cta} {email}', fonts, defs, bg + "".join(parts), css)
+
+
 # Tiap builder mengembalikan {nama_file_tanpa_tema: isi_svg}.
 BUILDERS = [
     lambda p, c: {"hero": hero_sketch(p, c)},
     buttons_sketch,
     lambda p, c: {"stack": stack_sketch(p, c)},
-    lambda p, c: {"footer": footer(p, c)},
+    lambda p, c: {"footer": footer_sketch(p, c)},
 ]
 
 
