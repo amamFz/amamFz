@@ -107,19 +107,55 @@ def hero(p, c):
 '''
 
 
-BUILDERS = {
-    "hero": hero,
+# ────────────────────────────── TOMBOL ──────────────────────────────
+# Ikon digambar sendiri (stroke 24x24), bukan logo merek.
+ICONS = {
+    # globe
+    "portfolio": '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.8 3.8 5.8 3.8 9s-1.2 6.2-3.8 9c-2.6-2.8-3.8-5.8-3.8-9S9.4 5.8 12 3z"/>',
+    # tas kerja
+    "linkedin": '<rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M8.5 7V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5V7M3 12.5h18"/>',
+    # amplop
+    "email": '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.8 6.5 12 13l8.2-6.5"/>',
+    # branch
+    "github": '<circle cx="6" cy="5.5" r="2.2"/><circle cx="6" cy="18.5" r="2.2"/><circle cx="18" cy="8" r="2.2"/><path d="M6 7.7v8.6M18 10.2c0 4-6 3.2-11 6.5"/>',
 }
+BUTTON_LABELS = {"portfolio": "Portfolio", "linkedin": "LinkedIn", "email": "Email", "github": "GitHub"}
+
+
+def button(key, c):
+    W, H = 220, 60
+    label = BUTTON_LABELS[key]
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-label="{label}">
+  <title>{label}</title>
+  <rect x="1" y="1" width="{W - 2}" height="{H - 2}" rx="14" fill="{c["surface"]}" stroke="{c["border"]}" stroke-width="1.5"/>
+  <rect x="12" y="12" width="36" height="36" rx="10" fill="{c["accent"]}" fill-opacity="0.16"/>
+  <g transform="translate(18 18)" fill="none" stroke="{c["accent_text"]}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">{ICONS[key]}</g>
+  <text x="62" y="37" font-family="{SANS}" font-size="19" font-weight="600" fill="{c["text"]}">{label}</text>
+  <path d="M188 36l10-10M190 26h8v8" fill="none" stroke="{c["muted"]}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+'''
+
+
+def buttons(p, c):
+    return {f"btn-{k}": button(k, c) for k in BUTTON_LABELS}
+
+
+# Tiap builder mengembalikan {nama_file_tanpa_tema: isi_svg}.
+BUILDERS = [
+    lambda p, c: {"hero": hero(p, c)},
+    buttons,
+]
 
 
 def main():
     p = json.loads((ROOT / "profile.json").read_text(encoding="utf-8"))
     ASSETS.mkdir(exist_ok=True)
     for theme_name, c in themes(p["accent"]).items():
-        for name, fn in BUILDERS.items():
-            out = ASSETS / f"{name}-{theme_name}.svg"
-            out.write_text(fn(p, c), encoding="utf-8")
-            print("wrote", out.relative_to(ROOT))
+        for fn in BUILDERS:
+            for name, svg in fn(p, c).items():
+                out = ASSETS / f"{name}-{theme_name}.svg"
+                out.write_text(svg, encoding="utf-8")
+                print("wrote", out.relative_to(ROOT))
 
 
 if __name__ == "__main__":
