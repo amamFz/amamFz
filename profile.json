@@ -41,5 +41,6 @@
       "VS Code"
     ]
   },
-  "accent": "#36BCF7"
+  "accent": "#36BCF7",
+  "calendar_style": "3d"
 }

@@ -24,4 +24,8 @@ Front-End Developer &amp; UI/UX Designer from Indonesia, crafting intuitive, res
 
 <picture><source media="(prefers-color-scheme: dark)" srcset="assets/stack-dark.svg"><source media="(prefers-color-scheme: light)" srcset="assets/stack-light.svg"><img src="assets/stack-dark.svg" alt="Tech stack" width="100%"></picture>
 
+<br/><br/>
+
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/calendar-dark.svg"><source media="(prefers-color-scheme: light)" srcset="assets/calendar-light.svg"><img src="assets/calendar-dark.svg" alt="Contribution calendar" width="100%"></picture>
+
 </div>
