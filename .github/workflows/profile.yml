@@ -6,7 +6,7 @@ on:
   workflow_dispatch:         # bisa dijalankan manual dari tab Actions
   push:
     branches: [main]
-    paths: [profile.json, build.py, .github/workflows/profile.yml]
+    paths: [profile.json, build.py, sketch.py, src/**, requirements.txt, .github/workflows/profile.yml]
 
 permissions:
   contents: write
@@ -21,6 +21,9 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install font tools
+        run: pip install -r requirements.txt
 
       - name: Build assets, calendar and README
         env:

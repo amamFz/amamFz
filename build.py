@@ -8,6 +8,8 @@ Tanpa dependensi luar, cukup Python 3.8+.
 """
 import json
 import pathlib
+
+import sketch
 from xml.sax.saxutils import escape
 
 ROOT = pathlib.Path(__file__).resolve().parent
@@ -23,11 +25,13 @@ def themes(accent):
             "bg": "#0d1117", "surface": "#161b22", "border": "#30363d",
             "text": "#e6edf3", "muted": "#8b949e", "faint": "#21262d",
             "accent": accent, "accent_text": accent,
+            "paper": "#0d1117", "grid": "#1a2029", "ink": "#e6edf3", "ink2": "#9da7b3", "dark": True,
         },
         "light": {
             "bg": "#ffffff", "surface": "#f6f8fa", "border": "#d0d7de",
             "text": "#1f2328", "muted": "#59636e", "faint": "#eaeef2",
             "accent": accent, "accent_text": shade(accent, 0.62),
+            "paper": "#fffcf5", "grid": "#efe9dc", "ink": "#2b2f36", "ink2": "#5d6570", "dark": False,
         },
     }
 
@@ -488,11 +492,82 @@ def footer(p, c):
 '''
 
 
+# ──────────────────────── TEMA SKETSA (coretan) ──────────────────────
+def paper(W, H, c, pen, fonts, seed_note=""):
+    """Kertas: latar, kotak-kotak buku tulis tipis, bingkai coretan. Mengembalikan (defs, body)."""
+    defs = (f'<pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">'
+            f'<path d="M24 0H0V24" fill="none" stroke="{c["grid"]}" stroke-width="1"/></pattern>')
+    body = (f'<rect x="4" y="4" width="{W - 8}" height="{H - 8}" rx="16" fill="{c["paper"]}"/>'
+            f'<rect x="4" y="4" width="{W - 8}" height="{H - 8}" rx="16" fill="url(#grid)"/>'
+            + pen.box(6, 6, W - 12, H - 12, r=16, color=c["ink2"], width=1.6, wobble=1.6))
+    return defs, body
+
+
+def svg_doc(W, H, label, fonts, defs, body, extra_css=""):
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-label="{t(label)}">
+  <title>{t(label)}</title>
+  <defs>{defs}<style>{fonts.css()}{extra_css}</style></defs>
+  {body}
+</svg>
+'''
+
+
+def stack_sketch(p, c):
+    W, PAD, LABEL_W = 900, 40, 168
+    PILL_H, GAP_X, GAP_Y, FS, ICON = 46, 11, 16, 25, 22
+    fonts = sketch.Fonts()
+    pen = sketch.Pen(seed=11, ink=c["ink"])
+    parts = []
+
+    # judul + stabilo + doodle
+    title = "Tech Stack"
+    tw = fonts.width("hand", title, 46)
+    parts.append(pen.highlight(PAD - 6, 62, tw + 14, 18, c["accent"], opacity=0.38 if c["dark"] else 0.32))
+    parts.append(fonts.text("hand", title, PAD, 72, 46, c["ink"]))
+    parts.append(pen.star(PAD + tw + 26, 46, 11, color=c["accent_text"]))
+    parts.append(pen.sparkle(PAD + tw + 52, 66, 6, color=c["ink2"], width=1.5))
+    note = "my everyday toolkit"
+    nw = fonts.width("note", note, 20)
+    parts.append(fonts.text("note", note, W - PAD - nw, 50, 20, c["ink2"]))
+    parts.append(pen.arrow(W - PAD - nw * 0.55, 60, W - PAD - nw * 0.85, 98, curve=-18, color=c["ink2"], width=1.6))
+
+    y = 118
+    for gi, (group, items) in enumerate(p["stack"].items()):
+        lw = fonts.width("hand", group, 26)
+        parts.append(fonts.text("hand", group, PAD, y + 31, 26, c["accent_text"]))
+        parts.append(pen.squiggle(PAD, y + 42, min(lw, LABEL_W - 30), amp=2.5, waves=3, color=c["accent_text"], width=1.6))
+        x = PAD + LABEL_W
+        for name in items:
+            pw = int(fonts.width("hand", name, FS)) + ICON + 36
+            if x + pw > W - PAD:
+                x, y = PAD + LABEL_W, y + PILL_H + GAP_Y
+            rot = pen.r.uniform(-1.4, 1.4)
+            cx, cy = x + pw / 2, y + PILL_H / 2
+            hex_ = (sketch.brand(name) or (c["accent"],))[0]
+            blob = f'<circle cx="{x + 12 + ICON / 2:.1f}" cy="{cy:.1f}" r="{ICON / 2 + 5}" fill="{hex_}" fill-opacity="{0.22 if c["dark"] else 0.16}"/>'
+            parts.append(
+                f'<g transform="rotate({rot:.2f} {cx:.1f} {cy:.1f})">'
+                + pen.box(x, y, pw, PILL_H, r=14, color=c["ink"], width=1.5, fill=c["paper"], wobble=1.1)
+                + blob
+                + sketch.icon(name, x + 12, cy - ICON / 2, ICON, c["ink"], c["dark"])
+                + fonts.text("hand", name, x + 12 + ICON + 10, cy + 8.5, FS, c["ink"])
+                + "</g>")
+            x += pw + GAP_X
+        y += PILL_H + 30
+
+    # doodle penutup di pojok kanan bawah
+    parts.append(pen.spiral(W - PAD - 14, y - 6, 12, color=c["ink2"], width=1.4))
+    H = y + 24
+    defs, bg = paper(W, H, c, pen, fonts)
+    label = "Tech stack: " + ", ".join(n for g in p["stack"].values() for n in g)
+    return svg_doc(W, H, label, fonts, defs, bg + "".join(parts))
+
+
 # Tiap builder mengembalikan {nama_file_tanpa_tema: isi_svg}.
 BUILDERS = [
     lambda p, c: {"hero": hero(p, c)},
     buttons,
-    lambda p, c: {"stack": stack(p, c)},
+    lambda p, c: {"stack": stack_sketch(p, c)},
     lambda p, c: {"footer": footer(p, c)},
 ]
 
