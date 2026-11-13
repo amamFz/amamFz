@@ -195,6 +195,253 @@ def stack(p, c):
 '''
 
 
+# ──────────────────────── KALENDER KONTRIBUSI ───────────────────────
+GQL = """query($login:String!){user(login:$login){contributionsCollection{contributionCalendar{
+  totalContributions weeks{contributionDays{date contributionCount contributionLevel}}}}}}"""
+LEVELS = {"NONE": 0, "FIRST_QUARTILE": 1, "SECOND_QUARTILE": 2, "THIRD_QUARTILE": 3, "FOURTH_QUARTILE": 4}
+
+
+def fetch_contributions(user):
+    """Ambil kalender dari GitHub GraphQL API. Butuh env GITHUB_TOKEN.
+    Mengembalikan list minggu; tiap minggu = list hari {date, count, level}."""
+    import os
+    import urllib.request
+    token = os.environ.get("GITHUB_TOKEN")
+    if os.environ.get("CALENDAR_SAMPLE"):           # hanya untuk preview lokal
+        return sample_contributions()
+    if not token:
+        return None
+    req = urllib.request.Request(
+        "https://api.github.com/graphql",
+        data=json.dumps({"query": GQL, "variables": {"login": user}}).encode(),
+        headers={"Authorization": f"bearer {token}", "Content-Type": "application/json",
+                 "User-Agent": "profile-readme-build"})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            data = json.load(r)
+    except Exception as exc:
+        if os.environ.get("CI"):
+            raise
+        print(f"warning: gagal mengambil kontribusi ({exc}); kalender tidak diubah")
+        return None
+    if "errors" in data:
+        raise SystemExit(f"GraphQL error: {data['errors']}")
+    weeks = data["data"]["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]
+    return [[{"date": d["date"], "count": d["contributionCount"],
+              "level": LEVELS.get(d["contributionLevel"], 0)} for d in w["contributionDays"]]
+            for w in weeks]
+
+
+def sample_contributions():
+    """Data contoh deterministik untuk preview; tidak pernah di-commit."""
+    import datetime
+    import random
+    rnd = random.Random(7)
+    end = datetime.date.today()
+    start = end - datetime.timedelta(days=364 + (end.weekday() + 1) % 7)
+    weeks, day = [], start
+    while day <= end:
+        if not weeks or day.weekday() == 6:
+            weeks.append([])
+        n = 0 if rnd.random() < 0.35 else int(rnd.expovariate(0.25))
+        weeks[-1].append({"date": day.isoformat(), "count": n,
+                          "level": 0 if n == 0 else min(4, 1 + n // 4)})
+        day += datetime.timedelta(days=1)
+    return weeks
+
+
+def streaks(days):
+    cur = best = run = 0
+    for d in days:
+        run = run + 1 if d["count"] else 0
+        best = max(best, run)
+    for d in reversed(days):                         # hari ini boleh masih 0
+        if d["count"]:
+            cur += 1
+        elif d is not days[-1]:
+            break
+    return cur, best
+
+
+def calendar_flat(p, c, weeks):
+    import datetime
+    W, PAD = 900, 36
+    CELL, STEP = 12, 15
+    GX, GY = PAD + 30, 132                              # pojok kiri-atas grid
+    lv = [c["faint"], c["accent"], c["accent"], c["accent"], c["accent"]]
+    op = [1, 0.3, 0.5, 0.75, 1]
+    H = GY + 7 * STEP + 52
+    parts = []
+
+    if weeks:
+        days = [d for w in weeks for d in w]
+        total = sum(d["count"] for d in days)
+        cur, best = streaks(days)
+        top = max(days, key=lambda d: d["count"])
+        stats = [(f"{total:,}", "contributions in the last year"),
+                 (f"{cur}", "day current streak"), (f"{best}", "day longest streak")]
+        # sel
+        for wi, w in enumerate(weeks[-53:]):
+            for d in w:
+                wd = (datetime.date.fromisoformat(d["date"]).weekday() + 1) % 7   # Minggu = 0
+                parts.append(f'<rect x="{GX + wi * STEP}" y="{GY + wd * STEP}" width="{CELL}" height="{CELL}" rx="3" '
+                             f'fill="{lv[d["level"]]}" fill-opacity="{op[d["level"]]}"><title>{d["date"]}: {d["count"]}</title></rect>')
+        # label bulan
+        last = None
+        for wi, w in enumerate(weeks[-53:]):
+            m = datetime.date.fromisoformat(w[0]["date"]).strftime("%b")
+            if m != last and wi < 51:
+                parts.append(f'<text x="{GX + wi * STEP}" y="{GY - 10}" font-family="{MONO}" font-size="12" fill="{c["muted"]}">{m}</text>')
+                last = m
+        foot = f'Most active: {datetime.date.fromisoformat(top["date"]).strftime("%d %b %Y")} · {top["count"]} contributions'
+    else:
+        stats = [("—", "waiting for first sync"), ("—", "day current streak"), ("—", "day longest streak")]
+        for wi in range(53):
+            for wd in range(7):
+                parts.append(f'<rect x="{GX + wi * STEP}" y="{GY + wd * STEP}" width="{CELL}" height="{CELL}" rx="3" fill="{c["faint"]}"/>')
+        foot = "Updated automatically by GitHub Actions"
+
+    for i, name in ((1, "Mon"), (3, "Wed"), (5, "Fri")):
+        parts.append(f'<text x="{PAD}" y="{GY + i * STEP + 10}" font-family="{MONO}" font-size="11" fill="{c["muted"]}">{name}</text>')
+    # statistik di header
+    sx = PAD
+    head = []
+    for num, label in stats:
+        head.append(f'<text x="{sx}" y="88" font-family="{SANS}" font-size="15" fill="{c["muted"]}">'
+                    f'<tspan font-size="22" font-weight="700" fill="{c["accent_text"]}">{t(num)}</tspan> {t(label)}</text>')
+        sx += int(text_width(num, 22) + text_width(label, 15)) + 48
+    # legenda
+    ly = H - 30
+    legend = [f'<text x="{W - PAD - 150}" y="{ly + 10}" font-family="{MONO}" font-size="11" fill="{c["muted"]}">Less</text>']
+    for i in range(5):
+        legend.append(f'<rect x="{W - PAD - 114 + i * 16}" y="{ly}" width="{CELL}" height="{CELL}" rx="3" fill="{lv[i]}" fill-opacity="{op[i]}"/>')
+    legend.append(f'<text x="{W - PAD - 30}" y="{ly + 10}" font-family="{MONO}" font-size="11" fill="{c["muted"]}">More</text>')
+
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-label="Contribution calendar">
+  <title>Contribution calendar for {t(p["github_user"])}</title>
+  <rect x="0.5" y="0.5" width="{W - 1}" height="{H - 1}" rx="18" fill="{c["bg"]}" stroke="{c["border"]}"/>
+  <text x="{PAD}" y="52" font-family="{SANS}" font-size="24" font-weight="700" fill="{c["text"]}">Contributions</text>
+  <rect x="{PAD}" y="64" width="44" height="4" rx="2" fill="{c["accent"]}"/>
+  {"".join(head)}
+  {"".join(parts)}
+  <text x="{PAD}" y="{ly + 10}" font-family="{MONO}" font-size="11" fill="{c["muted"]}">{t(foot)}</text>
+  {"".join(legend)}
+</svg>
+'''
+
+
+def mix(a, b, k):
+    """Campur warna hex a→b dengan rasio k (0..1)."""
+    pa = [int(a.lstrip("#")[i:i + 2], 16) for i in (0, 2, 4)]
+    pb = [int(b.lstrip("#")[i:i + 2], 16) for i in (0, 2, 4)]
+    return "#%02x%02x%02x" % tuple(round(x + (y - x) * k) for x, y in zip(pa, pb))
+
+
+def calendar_3d(p, c, weeks):
+    """Kalender kontribusi isometrik: tiap hari = balok, tinggi ~ jumlah kontribusi."""
+    import datetime
+    W, H, PAD = 900, 450, 36
+    UX, UY = 13.0, -4.0          # sumbu minggu (ke kanan-atas)
+    VX, VY = 10.0, 6.5           # sumbu hari (ke kanan-bawah)
+    OX, OY = 66.0, 332.0         # titik asal (minggu 0, Minggu)
+    FILL, HMAX = 0.78, 62.0      # ukuran balok di dalam sel, tinggi maksimum
+    dark = c["bg"] == "#0d1117"
+    empty = "#1c2128" if dark else "#e4e8ec"
+    lv = [empty] + [mix(empty, c["accent"], k) for k in (0.38, 0.6, 0.8, 1.0)]
+    side_l, side_r = (0.72, 0.52) if dark else (0.86, 0.70)
+    shade = lambda col, k: mix("#000000", col, k)
+
+    def pt(w, d, z=0.0):
+        return OX + w * UX + d * VX, OY + w * UY + d * VY - z
+
+    def poly(points, fill):
+        return '<path d="M' + "L".join(f"{x:.1f} {y:.1f}" for x, y in points) + f'Z" fill="{fill}"/>'
+
+    if weeks:
+        weeks = weeks[-53:]
+        days = [d for w in weeks for d in w]
+        counts = sorted(d["count"] for d in days if d["count"])
+        cap = counts[int(len(counts) * 0.95) - 1] if counts else 1
+        total = sum(d["count"] for d in days)
+        cur, best = streaks(days)
+        top = max(days, key=lambda d: d["count"])
+        stats = [(f"{total:,}", "contributions"), (str(cur), "day current streak"), (str(best), "day longest streak")]
+        foot = f'Most active: {datetime.date.fromisoformat(top["date"]).strftime("%d %b %Y")} · {top["count"]} contributions'
+    else:
+        days = None
+        cap = 1
+        stats = [("—", "waiting for first sync"), ("—", "day current streak"), ("—", "day longest streak")]
+        foot = "Updated automatically by GitHub Actions"
+
+    cells = []                                   # (w, d, level, count, date)
+    if weeks:
+        for wi, w in enumerate(weeks):
+            for d in w:
+                wd = (datetime.date.fromisoformat(d["date"]).weekday() + 1) % 7
+                cells.append((wi, wd, d["level"], d["count"], d["date"]))
+    else:
+        cells = [(wi, wd, 0, 0, None) for wi in range(53) for wd in range(7)]
+
+    # gambar dari belakang ke depan (painter's algorithm)
+    cells.sort(key=lambda e: (UY * e[0] + VY * e[1], e[0]))
+    m = (1 - FILL) / 2
+    blocks = []
+    for w, d, level, count, date in cells:
+        h = 2.5 if not count else 5 + HMAX * min(count, cap) / cap
+        a, b = w + m, w + 1 - m
+        e, f = d + m, d + 1 - m
+        col = lv[level]
+        top_face = poly([pt(a, e, h), pt(b, e, h), pt(b, f, h), pt(a, f, h)], col)
+        left = poly([pt(a, e), pt(a, f), pt(a, f, h), pt(a, e, h)], shade(col, side_l))
+        front = poly([pt(a, f), pt(b, f), pt(b, f, h), pt(a, f, h)], shade(col, side_r))
+        tip = f"<title>{date}: {count}</title>" if date else ""
+        blocks.append(f"<g>{tip}{left}{front}{top_face}</g>")
+
+    # label bulan di sepanjang tepi depan
+    months = []
+    if weeks:
+        last = None
+        for wi, w in enumerate(weeks):
+            mname = datetime.date.fromisoformat(w[0]["date"]).strftime("%b")
+            if mname != last and wi < 51:
+                x, y = pt(wi + 0.2, 7.6)
+                months.append(f'<text transform="translate({x:.1f} {y + 12:.1f}) rotate(-17.1)" font-family="{MONO}" '
+                              f'font-size="11" fill="{c["muted"]}">{mname}</text>')
+                last = mname
+
+    head = []
+    for i, (num, label) in enumerate(stats):
+        y = 112 + i * 40
+        head.append(f'<text x="{PAD}" y="{y}" font-family="{SANS}" font-size="15" fill="{c["muted"]}">'
+                    f'<tspan font-size="24" font-weight="700" fill="{c["accent_text"]}">{t(num)}</tspan> {t(label)}</text>')
+
+    ly = H - 32
+    legend = [f'<text x="{W - PAD - 150}" y="{ly + 10}" font-family="{MONO}" font-size="11" fill="{c["muted"]}">Less</text>']
+    for i in range(5):
+        legend.append(f'<rect x="{W - PAD - 114 + i * 16}" y="{ly}" width="12" height="12" rx="3" fill="{lv[i]}"/>')
+    legend.append(f'<text x="{W - PAD - 30}" y="{ly + 10}" font-family="{MONO}" font-size="11" fill="{c["muted"]}">More</text>')
+
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-label="3D contribution calendar">
+  <title>3D contribution calendar for {t(p["github_user"])}</title>
+  <defs>
+    <radialGradient id="cal-glow" cx="70%" cy="45%" r="55%">
+      <stop offset="0" stop-color="{c["accent"]}" stop-opacity="{0.14 if dark else 0.10}"/>
+      <stop offset="1" stop-color="{c["accent"]}" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect x="0.5" y="0.5" width="{W - 1}" height="{H - 1}" rx="18" fill="{c["bg"]}" stroke="{c["border"]}"/>
+  <rect x="1" y="1" width="{W - 2}" height="{H - 2}" rx="18" fill="url(#cal-glow)"/>
+  <text x="{PAD}" y="52" font-family="{SANS}" font-size="24" font-weight="700" fill="{c["text"]}">Contributions</text>
+  <rect x="{PAD}" y="64" width="44" height="4" rx="2" fill="{c["accent"]}"/>
+  {"".join(head)}
+  {"".join(blocks)}
+  {"".join(months)}
+  <text x="{PAD}" y="{ly + 10}" font-family="{MONO}" font-size="11" fill="{c["muted"]}">{t(foot)}</text>
+  {"".join(legend)}
+</svg>
+'''
+
+
 # Tiap builder mengembalikan {nama_file_tanpa_tema: isi_svg}.
 BUILDERS = [
     lambda p, c: {"hero": hero(p, c)},
@@ -244,6 +491,10 @@ def readme(p):
 
 {picture("stack", "Tech stack", width="100%")}
 
+<br/><br/>
+
+{picture("calendar", "Contribution calendar", width="100%")}
+
 </div>
 '''
 
@@ -262,6 +513,20 @@ def main():
                 out = ASSETS / f"{name}-{theme_name}.svg"
                 out.write_text(svg, encoding="utf-8")
                 print("wrote", out.relative_to(ROOT))
+
+    # Kalender: hanya ditulis ulang bila ada data (token tersedia), supaya build lokal
+    # tanpa token tidak menimpa kalender asli. Jika belum ada, buat placeholder.
+    import os
+    weeks = fetch_contributions(p["github_user"])
+    cal_dir = pathlib.Path(os.environ.get("CALENDAR_OUT", ASSETS))
+    for theme_name, c in themes(p["accent"]).items():
+        out = cal_dir / f"calendar-{theme_name}.svg"
+        if weeks or not out.exists():
+            style = calendar_3d if p.get("calendar_style", "3d") == "3d" else calendar_flat
+            out.write_text(style(p, c, weeks), encoding="utf-8")
+            print("wrote", out, "(data)" if weeks else "(placeholder)")
+        else:
+            print("kept", out.relative_to(ROOT), "(tidak ada data baru)")
     write_readme(p)
 
 
