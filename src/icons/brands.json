@@ -1,0 +1,58 @@
+{
+  "css": {
+    "title": "CSS",
+    "hex": "#663399"
+  },
+  "figma": {
+    "title": "Figma",
+    "hex": "#F24E1E"
+  },
+  "git": {
+    "title": "Git",
+    "hex": "#F03C2E"
+  },
+  "github": {
+    "title": "GitHub",
+    "hex": "#181717"
+  },
+  "html5": {
+    "title": "HTML5",
+    "hex": "#E34F26"
+  },
+  "javascript": {
+    "title": "JavaScript",
+    "hex": "#F7DF1E"
+  },
+  "mui": {
+    "title": "MUI",
+    "hex": "#007FFF"
+  },
+  "mysql": {
+    "title": "MySQL",
+    "hex": "#4479A1"
+  },
+  "nextdotjs": {
+    "title": "Next.js",
+    "hex": "#000000"
+  },
+  "react": {
+    "title": "React",
+    "hex": "#61DAFB"
+  },
+  "sass": {
+    "title": "Sass",
+    "hex": "#CC6699"
+  },
+  "tailwindcss": {
+    "title": "Tailwind CSS",
+    "hex": "#06B6D4"
+  },
+  "typescript": {
+    "title": "TypeScript",
+    "hex": "#3178C6"
+  },
+  "vuedotjs": {
+    "title": "Vue.js",
+    "hex": "#4FC08D"
+  }
+}
