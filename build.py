@@ -634,10 +634,35 @@ def hero_sketch(p, c):
     return svg_doc(W, H, f'{p["name"]} — {p["tagline"]}', fonts, defs, bg + "".join(parts), css)
 
 
+def button_sketch(key, c):
+    W, H = 232, 72
+    fonts = sketch.Fonts()
+    pen = sketch.Pen(seed=sum(map(ord, key)), ink=c["ink"])
+    label = BUTTON_LABELS[key]
+    rot = pen.r.uniform(-1.6, 1.6)
+    bx, by, bw, bh = 8, 9, W - 16, H - 18
+    ix, iy = bx + 16, by + (bh - 26) / 2
+    body = [
+        pen.box(bx, by, bw, bh, r=14, color=c["ink"], width=1.7, fill=c["paper"], wobble=1.2),
+        f'<clipPath id="hb"><circle cx="{ix + 13}" cy="{iy + 13}" r="17"/></clipPath>',
+        pen.hachure(ix - 6, iy - 6, 38, 38, c["accent"], gap=4.5, width=1.4, opacity=0.55, clip_id="hb"),
+        f'<g transform="translate({ix + 1} {iy + 1})" fill="none" stroke="{c["ink"]}" stroke-width="2" '
+        f'stroke-linecap="round" stroke-linejoin="round">{ICONS[key]}</g>',
+        fonts.text("hand", label, ix + 40, by + bh / 2 + 9, 28, c["ink"]),
+        pen.arrow(W - 50, by + bh / 2 + 7, W - 30, by + bh / 2 - 9, curve=-6, color=c["accent_text"], width=2, head=7),
+    ]
+    g = f'<g transform="rotate({rot:.2f} {W / 2} {H / 2})">{"".join(body)}</g>'
+    return svg_doc(W, H, label, fonts, "", g)
+
+
+def buttons_sketch(p, c):
+    return {f"btn-{k}": button_sketch(k, c) for k in BUTTON_LABELS}
+
+
 # Tiap builder mengembalikan {nama_file_tanpa_tema: isi_svg}.
 BUILDERS = [
     lambda p, c: {"hero": hero_sketch(p, c)},
-    buttons,
+    buttons_sketch,
     lambda p, c: {"stack": stack_sketch(p, c)},
     lambda p, c: {"footer": footer(p, c)},
 ]
