@@ -12,7 +12,7 @@
   "links": {
     "portfolio": "https://ilham-portfolio.framer.website/",
     "linkedin": "https://www.linkedin.com/in/ilhamfauzi-id",
-    "email": "if72322322@gmail.com",
+    "email": "ilhamfauzicom21@gmail.com",
     "github": "https://github.com/amamFz"
   },
   "stack": {
@@ -42,5 +42,9 @@
     ]
   },
   "accent": "#36BCF7",
-  "calendar_style": "3d"
+  "calendar_style": "3d",
+  "footer": {
+    "cta": "Let's build something great together.",
+    "sub": "Open to collaboration, projects and new opportunities. Feel free to reach out!"
+  }
 }

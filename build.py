@@ -442,11 +442,58 @@ def calendar_3d(p, c, weeks):
 '''
 
 
+# ────────────────────────────── FOOTER ──────────────────────────────
+def footer(p, c):
+    W, H, PAD = 900, 230, 44
+    email = p["links"]["email"]
+    ew = int(len(email) * 17 * 0.62) + 68          # font mono: lebar per huruf ~0.6em
+    dark = c["bg"] == "#0d1117"
+
+    def cube(x, y, s, k):
+        """Kubus isometrik kecil sebagai dekorasi (senada dengan kalender 3D)."""
+        top = mix(c["bg"], c["accent"], k)
+        l, r = mix("#000000", top, 0.72 if dark else 0.86), mix("#000000", top, 0.52 if dark else 0.70)
+        h = s * 0.58
+        return (f'<path d="M{x} {y}l{s} {-h}l{s} {h}l{-s} {h}z" fill="{top}"/>'
+                f'<path d="M{x} {y}l{s} {h}v{s * 1.15}l{-s} {-h}z" fill="{l}"/>'
+                f'<path d="M{x + s} {y + h}l{s} {-h}v{s * 1.15}l{-s} {h}z" fill="{r}"/>')
+
+    cubes = "".join([cube(700, 86, 26, 1.0), cube(752, 116, 20, 0.6), cube(668, 140, 16, 0.4),
+                     cube(790, 64, 14, 0.8)])
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-label="{t(p["footer"]["cta"])} {t(email)}">
+  <title>{t(p["footer"]["cta"])} — {t(email)}</title>
+  <defs>
+    <radialGradient id="ft-glow" cx="82%" cy="50%" r="50%">
+      <stop offset="0" stop-color="{c["accent"]}" stop-opacity="{0.20 if dark else 0.14}"/>
+      <stop offset="1" stop-color="{c["accent"]}" stop-opacity="0"/>
+    </radialGradient>
+    <style>
+      .bob {{ animation: bob 5s ease-in-out infinite; }}
+      @keyframes bob {{ 50% {{ transform: translateY(-5px); }} }}
+      @media (prefers-reduced-motion: reduce) {{ .bob {{ animation: none; }} }}
+    </style>
+  </defs>
+  <rect x="0.5" y="0.5" width="{W - 1}" height="{H - 1}" rx="18" fill="{c["bg"]}" stroke="{c["border"]}"/>
+  <rect x="1" y="1" width="{W - 2}" height="{H - 2}" rx="18" fill="url(#ft-glow)"/>
+  <text x="{PAD}" y="66" font-family="{MONO}" font-size="15" fill="{c["accent_text"]}">// get in touch</text>
+  <text x="{PAD}" y="106" font-family="{SANS}" font-size="30" font-weight="800" fill="{c["text"]}">{t(p["footer"]["cta"])}</text>
+  <text x="{PAD}" y="136" font-family="{SANS}" font-size="16" fill="{c["muted"]}">{t(p["footer"]["sub"])}</text>
+  <g transform="translate({PAD} 156)">
+    <rect width="{ew}" height="44" rx="22" fill="{c["accent"]}" fill-opacity="0.14" stroke="{c["accent"]}" stroke-opacity="0.55"/>
+    <g transform="translate(16 10)" fill="none" stroke="{c["accent_text"]}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">{ICONS["email"]}</g>
+    <text x="50" y="28" font-family="{MONO}" font-size="17" font-weight="600" fill="{c["text"]}">{t(email)}</text>
+  </g>
+  <g class="bob">{cubes}</g>
+</svg>
+'''
+
+
 # Tiap builder mengembalikan {nama_file_tanpa_tema: isi_svg}.
 BUILDERS = [
     lambda p, c: {"hero": hero(p, c)},
     buttons,
     lambda p, c: {"stack": stack(p, c)},
+    lambda p, c: {"footer": footer(p, c)},
 ]
 
 
@@ -494,6 +541,10 @@ def readme(p):
 <br/><br/>
 
 {picture("calendar", "Contribution calendar", width="100%")}
+
+<br/><br/>
+
+<a href="mailto:{t(L["email"])}">{picture("footer", p["footer"]["cta"] + " " + L["email"], width="100%")}</a>
 
 </div>
 '''
