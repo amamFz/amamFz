@@ -229,7 +229,10 @@ def fetch_contributions(user):
         print(f"warning: gagal mengambil kontribusi ({exc}); kalender tidak diubah")
         return None
     if "errors" in data:
-        raise SystemExit(f"GraphQL error: {data['errors']}")
+        if os.environ.get("CI"):
+            raise SystemExit(f"GraphQL error: {data['errors']}")
+        print(f"warning: GraphQL error ({data['errors']}); kalender tidak diubah")
+        return None
     weeks = data["data"]["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]
     return [[{"date": d["date"], "count": d["contributionCount"],
               "level": LEVELS.get(d["contributionLevel"], 0)} for d in w["contributionDays"]]
@@ -659,7 +662,7 @@ def buttons_sketch(p, c):
     return {f"btn-{k}": button_sketch(k, c) for k in BUTTON_LABELS}
 
 
-def calendar_sketch(p, c, weeks):
+def calendar_sketch(p, c, weeks, foot=None, empty_note=None):
     """Kalender isometrik 3D bergaya coretan: balok bergaris tinta di atas kertas."""
     import datetime
     W, H, PAD = 900, 470, 40
@@ -760,11 +763,11 @@ def calendar_sketch(p, c, weeks):
                 parts.append(f'<g transform="translate({x:.1f} {y + 14:.1f}) rotate(-17.1)">'
                              + fonts.text("note", mname, 0, 0, 16, c["ink2"]) + "</g>")
                 last = mname
-        foot = "drawn fresh every day by GitHub Actions"
+        foot = foot or "drawn fresh every day by GitHub Actions"
     else:
-        parts.append(fonts.text("hand", "waiting for the first sync...", PAD + 4, 134, 32, c["ink2"]))
+        parts.append(fonts.text("hand", empty_note or "waiting for the first sync...", PAD + 4, 134, 32, c["ink2"]))
         parts.append(pen.arrow(PAD + 120, 150, PAD + 170, 230, curve=20, color=c["ink2"], width=1.8))
-        foot = "updated automatically by GitHub Actions"
+        foot = foot or "updated automatically by GitHub Actions"
 
     ly = H - 34
     parts.append(fonts.text("note", foot, PAD, ly + 12, 18, c["ink2"]))
@@ -906,12 +909,14 @@ BUILDERS = [
 
 
 # ────────────────────────────── README ──────────────────────────────
-def picture(name, alt, width=None, height=None):
+def picture(name, alt, width=None, height=None, url=None):
+    """<picture> gelap/terang. `url` (opsional) = endpoint luar yang menerima ?theme=dark|light."""
     size = (f' width="{width}"' if width else "") + (f' height="{height}"' if height else "")
+    src = (lambda th: f"{url}?theme={th}") if url else (lambda th: f"assets/{name}-{th}.svg")
     return (f'<picture>'
-            f'<source media="(prefers-color-scheme: dark)" srcset="assets/{name}-dark.svg">'
-            f'<source media="(prefers-color-scheme: light)" srcset="assets/{name}-light.svg">'
-            f'<img src="assets/{name}-dark.svg" alt="{t(alt)}"{size}>'
+            f'<source media="(prefers-color-scheme: dark)" srcset="{t(src("dark"))}">'
+            f'<source media="(prefers-color-scheme: light)" srcset="{t(src("light"))}">'
+            f'<img src="{t(src("dark"))}" alt="{t(alt)}"{size}>'
             f'</picture>')
 
 
@@ -944,7 +949,7 @@ def readme(p):
 
 <br/><br/>
 
-{picture("calendar", "Contribution calendar", width="100%")}
+{picture("calendar", "Contribution calendar", width="100%", url=p.get("calendar_url") or None)}
 
 <br/><br/>
 

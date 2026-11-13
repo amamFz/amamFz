@@ -1,0 +1,8 @@
+{
+  "functions": {
+    "api/contrib.py": {
+      "includeFiles": "{build.py,sketch.py,profile.json,src/**}",
+      "maxDuration": 20
+    }
+  }
+}
