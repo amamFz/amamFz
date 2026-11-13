@@ -140,11 +140,117 @@ def buttons(p, c):
     return {f"btn-{k}": button(k, c) for k in BUTTON_LABELS}
 
 
+# ──────────────────────────── TECH STACK ────────────────────────────
+# Titik warna khas tiap teknologi (hanya kode warna, bukan logo). Fallback: aksen.
+TECH_COLORS = {
+    "HTML": "#E34F26", "CSS": "#663399", "JavaScript": "#F7DF1E", "TypeScript": "#3178C6",
+    "React": "#61DAFB", "Next.js": "#888888", "Vue": "#42B883", "Material UI": "#007FFF",
+    "Tailwind CSS": "#38BDF8", "Sass": "#CC6699", "MySQL": "#4479A1", "Figma": "#F24E1E",
+    "Illustrator": "#FF9A00", "Git": "#F05032", "GitHub": "#8B949E", "VS Code": "#007ACC",
+}
+
+
+def text_width(s, size):
+    """Perkiraan lebar teks sans-serif semibold (cukup akurat untuk ukuran pill)."""
+    w = 0.0
+    for ch in s:
+        if ch in "il.,:;|!'I j": w += 0.30
+        elif ch in "ft()r-": w += 0.38
+        elif ch in "mwMW": w += 0.88
+        elif ch.isupper(): w += 0.68
+        else: w += 0.56
+    return w * size
+
+
+def stack(p, c):
+    W, PAD, LABEL_W = 900, 36, 200
+    PILL_H, GAP_X, GAP_Y, FS = 40, 12, 14, 17
+    rows, y = [], 92
+    for group, items in p["stack"].items():
+        x, row_y = PAD + LABEL_W, y
+        pills = []
+        for name in items:
+            pw = int(text_width(name, FS)) + 58
+            if x + pw > W - PAD:              # bungkus ke baris berikutnya
+                x, y = PAD + LABEL_W, y + PILL_H + GAP_Y
+            dot = TECH_COLORS.get(name, c["accent"])
+            pills.append(
+                f'<g transform="translate({x} {y})">'
+                f'<rect width="{pw}" height="{PILL_H}" rx="{PILL_H // 2}" fill="{c["surface"]}" stroke="{c["border"]}"/>'
+                f'<circle cx="22" cy="20" r="6" fill="{dot}"/>'
+                f'<text x="38" y="26" font-family="{SANS}" font-size="{FS}" font-weight="600" fill="{c["text"]}">{t(name)}</text></g>')
+            x += pw + GAP_X
+        rows.append(
+            f'<text x="{PAD}" y="{row_y + 26}" font-family="{MONO}" font-size="16" fill="{c["muted"]}">'
+            f'<tspan fill="{c["accent_text"]}">//</tspan> {t(group.lower())}</text>' + "".join(pills))
+        y += PILL_H + 26
+    H = y + 14
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-label="Tech stack">
+  <title>Tech stack: {t(", ".join(n for g in p["stack"].values() for n in g))}</title>
+  <rect x="0.5" y="0.5" width="{W - 1}" height="{H - 1}" rx="18" fill="{c["bg"]}" stroke="{c["border"]}"/>
+  <text x="{PAD}" y="52" font-family="{SANS}" font-size="24" font-weight="700" fill="{c["text"]}">Tech Stack</text>
+  <rect x="{PAD}" y="64" width="44" height="4" rx="2" fill="{c["accent"]}"/>
+  {"".join(rows)}
+</svg>
+'''
+
+
 # Tiap builder mengembalikan {nama_file_tanpa_tema: isi_svg}.
 BUILDERS = [
     lambda p, c: {"hero": hero(p, c)},
     buttons,
+    lambda p, c: {"stack": stack(p, c)},
 ]
+
+
+# ────────────────────────────── README ──────────────────────────────
+def picture(name, alt, width=None, height=None):
+    size = (f' width="{width}"' if width else "") + (f' height="{height}"' if height else "")
+    return (f'<picture>'
+            f'<source media="(prefers-color-scheme: dark)" srcset="assets/{name}-dark.svg">'
+            f'<source media="(prefers-color-scheme: light)" srcset="assets/{name}-light.svg">'
+            f'<img src="assets/{name}-dark.svg" alt="{t(alt)}"{size}>'
+            f'</picture>')
+
+
+def readme(p):
+    L = p["links"]
+    hrefs = {"portfolio": L["portfolio"], "linkedin": L["linkedin"],
+             "email": "mailto:" + L["email"], "github": L["github"]}
+    btns = "\n  ".join(
+        f'<a href="{t(hrefs[k])}">{picture("btn-" + k, BUTTON_LABELS[k], height=52)}</a>'
+        for k in BUTTON_LABELS)
+    e = p["education"]
+    return f'''<!-- File ini dibuat oleh build.py dari profile.json. Edit data di sana, lalu jalankan: python3 build.py -->
+<div align="center">
+
+<p>{picture("hero", p["name"] + " — " + p["tagline"], width="100%")}</p>
+
+<p>
+  {btns}
+</p>
+
+</div>
+
+### About me
+
+{t(p["bio"])}
+
+🎓 **{t(e["school"])}** — {t(e["major"])} ({t(e["years"])})
+
+<br/>
+
+<div align="center">
+
+{picture("stack", "Tech stack", width="100%")}
+
+</div>
+'''
+
+
+def write_readme(p):
+    (ROOT / "README.md").write_text(readme(p), encoding="utf-8")
+    print("wrote README.md")
 
 
 def main():
@@ -156,6 +262,7 @@ def main():
                 out = ASSETS / f"{name}-{theme_name}.svg"
                 out.write_text(svg, encoding="utf-8")
                 print("wrote", out.relative_to(ROOT))
+    write_readme(p)
 
 
 if __name__ == "__main__":
