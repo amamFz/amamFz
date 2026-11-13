@@ -827,10 +827,79 @@ def footer_sketch(p, c):
     return svg_doc(W, H, f'{cta} {email}', fonts, defs, bg + "".join(parts), css)
 
 
+def wrap(fonts, key, text, size, max_w):
+    """Pecah teks jadi baris berdasarkan lebar font sebenarnya."""
+    lines, cur = [], ""
+    for word in text.split():
+        trial = f"{cur} {word}".strip()
+        if cur and fonts.width(key, trial, size) > max_w:
+            lines.append(cur)
+            cur = word
+        else:
+            cur = trial
+    return lines + ([cur] if cur else [])
+
+
+def about_sketch(p, c):
+    W, PAD = 900, 44
+    fonts = sketch.Fonts()
+    pen = sketch.Pen(seed=13, ink=c["ink"])
+    parts = []
+
+    title = "About me"
+    tw = fonts.width("hand", title, 44)
+    parts.append(pen.highlight(PAD - 6, 60, tw + 14, 18, c["accent"], opacity=0.38 if c["dark"] else 0.32))
+    parts.append(fonts.text("hand", title, PAD, 70, 44, c["ink"]))
+    parts.append(pen.squiggle(PAD + tw + 18, 56, 30, amp=4, waves=2, color=c["accent_text"], width=2))
+
+    # bio
+    y = 116
+    for line in wrap(fonts, "note", p["bio"], 22, 520):
+        parts.append(fonts.text("note", line, PAD, y, 22, c["ink"]))
+        y += 32
+
+    # pendidikan dengan topi wisuda
+    e = p["education"]
+    y += 20
+    cx, cy = PAD + 18, y - 8
+    cap = (f'<path d="M{cx - 18} {cy}L{cx} {cy - 9}L{cx + 18} {cy}L{cx} {cy + 9}Z" fill="{c["accent"]}" fill-opacity="0.35"/>'
+           + pen.line(cx - 18, cy, cx, cy - 9, passes=1, width=1.8) + pen.line(cx, cy - 9, cx + 18, cy, passes=1, width=1.8)
+           + pen.line(cx + 18, cy, cx, cy + 9, passes=1, width=1.8) + pen.line(cx, cy + 9, cx - 18, cy, passes=1, width=1.8)
+           + f'<path d="M{cx - 10} {cy + 5}v8c6 5 14 5 20 0v-8" fill="none" stroke="{c["ink"]}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'
+           + f'<path d="M{cx + 14} {cy + 2}v12" stroke="{c["accent_text"]}" stroke-width="1.8" stroke-linecap="round"/>'
+           + f'<circle cx="{cx + 14}" cy="{cy + 16}" r="2.2" fill="{c["accent_text"]}"/>')
+    parts.append(cap)
+    parts.append(fonts.text("hand", e["school"], PAD + 48, y, 32, c["ink"]))
+    sw = fonts.width("hand", e["school"], 32)
+    parts.append(pen.underline(PAD + 48, y + 9, sw, color=c["accent_text"], width=2))
+    parts.append(fonts.text("note", f'{e["major"]}  ·  {e["years"]}', PAD + 48, y + 38, 21, c["ink2"]))
+    H = int(y + 76)
+
+    # catatan tempel "currently"
+    nx, ny, nw, nh = 618, 70, 236, 160
+    note_bg = mix(c["paper"], c["accent"], 0.22 if c["dark"] else 0.16)
+    note = [pen.box(nx, ny, nw, nh, r=6, color=c["ink"], width=1.6, fill=note_bg, wobble=1.0),
+            f'<rect x="{nx + nw / 2 - 34}" y="{ny - 10}" width="68" height="22" rx="2" fill="{c["ink2"]}" fill-opacity="0.35" transform="rotate(-4 {nx + nw / 2} {ny})"/>',
+            fonts.text("hand", "currently:", nx + 20, ny + 44, 28, c["accent_text"])]
+    yy = ny + 80
+    for line in wrap(fonts, "hand", p["currently"], 25, nw - 40):
+        note.append(fonts.text("hand", line, nx + 20, yy, 25, c["ink"]))
+        yy += 30
+    note.append(pen.star(nx + nw - 26, ny + nh - 24, 9, color=c["accent_text"]))
+    parts.append(f'<g transform="rotate(3 {nx + nw / 2} {ny + nh / 2})">{"".join(note)}</g>')
+    parts.append(pen.sparkle(nx - 26, ny + 20, 7, color=c["ink2"]))
+    H = max(H, ny + nh + 50)
+
+    defs, bg = paper(W, H, c, pen, fonts)
+    return svg_doc(W, H, f'About me: {p["bio"]} Education: {e["school"]}, {e["major"]} ({e["years"]})',
+                   fonts, defs, bg + "".join(parts))
+
+
 # Tiap builder mengembalikan {nama_file_tanpa_tema: isi_svg}.
 BUILDERS = [
     lambda p, c: {"hero": hero_sketch(p, c)},
     buttons_sketch,
+    lambda p, c: {"about": about_sketch(p, c)},
     lambda p, c: {"stack": stack_sketch(p, c)},
     lambda p, c: {"footer": footer_sketch(p, c)},
 ]
@@ -865,15 +934,11 @@ def readme(p):
 
 </div>
 
-### About me
-
-{t(p["bio"])}
-
-🎓 **{t(e["school"])}** — {t(e["major"])} ({t(e["years"])})
-
-<br/>
-
 <div align="center">
+
+{picture("about", "About me: " + p["bio"] + " Education: " + e["school"] + ", " + e["major"] + " (" + e["years"] + ")", width="100%")}
+
+<br/><br/>
 
 {picture("stack", "Tech stack", width="100%")}
 
