@@ -706,19 +706,59 @@ def calendar_sketch(p, c, weeks, foot=None, empty_note=None):
 
     cells.sort(key=lambda e: (UY * e[0] + VY * e[1], e[0]))
     m = (1 - FILL) / 2
+    animate = p.get("calendar_animate", True)
+    # tata letak 2D (grid datar seperti kalender GitHub) untuk animasi 3D <-> 2D
+    S2, GX, GY = 15.0, (W - 53 * 15) / 2, 262.0
+
+    def p2(w, d):
+        return GX + w * S2, GY + d * S2
+
+    def num(v):
+        return str(round(v))
+
+    def path_d(points):
+        return "M" + "L".join(f"{num(x)} {num(y)}" for x, y in points) + "Z"
+
+    # animasi "to" dari bentuk sekarang; dipicu jam bersama #g (ke 2D) / #b (ke 3D)
+    EASE = 'calcMode="spline" keyTimes="0;1" keySplines=".6 0 .3 1"'
+
+    def face(points, flat_pts, fill, stroke=True):
+        a = path_d([(x + pen.j(0.5), y + pen.j(0.5)) for x, y in points])
+        st = f' stroke="{outline}" stroke-width="0.9" stroke-linejoin="round"' if stroke else ""
+        if not animate:
+            return f'<path d="{a}" fill="{fill}"{st}/>'
+        return (f'<path d="{a}" fill="{fill}"{st}>'
+                f'<animate attributeName="d" to="{path_d(flat_pts)}" begin="g.begin" dur="1.2s" fill="freeze"/>'
+                f'<animate attributeName="d" to="{a}" begin="b.begin" dur="1.2s" fill="freeze"/></path>')
+
     blocks = []
     for w, d, level, count, date in cells:
         h = 2.0 if not count else 5 + HMAX * min(count, cap) / cap
         a, b, e, f = w + m, w + 1 - m, d + m, d + 1 - m
         col = lv[level]
         tip = f"<title>{date}: {count}</title>" if date else ""
+        top3 = [pt(a, e, h), pt(b, e, h), pt(b, f, h), pt(a, f, h)]
+        top2 = [p2(a, e), p2(b, e), p2(b, f), p2(a, f)]
         if not count:
-            blocks.append(face([pt(a, e, h), pt(b, e, h), pt(b, f, h), pt(a, f, h)], col, stroke=False))
+            blocks.append(face(top3, top2, col, stroke=False))
             continue
         blocks.append("<g>" + tip
-                      + face([pt(a, e), pt(a, f), pt(a, f, h), pt(a, e, h)], mix("#000000", col, side_l))
-                      + face([pt(a, f), pt(b, f), pt(b, f, h), pt(a, f, h)], mix("#000000", col, side_r))
-                      + face([pt(a, e, h), pt(b, e, h), pt(b, f, h), pt(a, f, h)], col) + "</g>")
+                      + face([pt(a, e), pt(a, f), pt(a, f, h), pt(a, e, h)],
+                             [p2(a, e), p2(a, f), p2(a, f), p2(a, e)], mix("#000000", col, side_l))
+                      + face([pt(a, f), pt(b, f), pt(b, f, h), pt(a, f, h)],
+                             [p2(a, f), p2(b, f), p2(b, f), p2(a, f)], mix("#000000", col, side_r))
+                      + face(top3, top2, col) + "</g>")
+
+    def fade(show_in_3d=True):
+        """Opacity: tampil di 3D lalu hilang di 2D (True), atau sebaliknya (False)."""
+        if not animate:
+            return ""
+        # yang akan hilang memudar cepat di awal transisi; yang akan muncul menyusul di akhir
+        if show_in_3d:
+            return ('<animate attributeName="opacity" to="0" begin="g.begin" dur=".4s" fill="freeze"/>'
+                    '<animate attributeName="opacity" to="1" begin="b.begin+.8s" dur=".4s" fill="freeze"/>')
+        return ('<animate attributeName="opacity" to="1" begin="g.begin+.8s" dur=".4s" fill="freeze"/>'
+                '<animate attributeName="opacity" to="0" begin="b.begin" dur=".4s" fill="freeze"/>')
 
     parts = []
     # judul
@@ -727,6 +767,10 @@ def calendar_sketch(p, c, weeks, foot=None, empty_note=None):
     parts.append(pen.highlight(PAD - 6, 58, tw + 14, 18, c["accent"], opacity=0.38 if dark else 0.32))
     parts.append(fonts.text("hand", title, PAD, 68, 44, c["ink"]))
     parts.append(pen.sparkle(PAD + tw + 22, 44, 8, color=c["accent_text"]))
+    if animate:
+        mx = PAD + tw + 44
+        parts.append(f'<g>{fonts.text("note", "(3D view)", mx, 62, 20, c["ink2"])}{fade(True)}</g>')
+        parts.append(f'<g opacity="0">{fonts.text("note", "(2D view)", mx, 62, 20, c["ink2"])}{fade(False)}</g>')
 
     # statistik sebagai catatan tangan
     if stats:
@@ -746,6 +790,7 @@ def calendar_sketch(p, c, weeks, foot=None, empty_note=None):
         tx, ty = pt(w + 0.5, d + 0.5, h)
         label = f"best day! ({count})"
         lw = fonts.width("note", label, 21)
+        parts.append("<g>")
         ly0 = max(ty - 44, 34)
         if tx + 30 + lw < W - PAD:          # label di kanan atas balok
             lx = tx + 30
@@ -754,20 +799,37 @@ def calendar_sketch(p, c, weeks, foot=None, empty_note=None):
             lx = tx - 30 - lw
             parts.append(pen.arrow(lx + lw + 2, ly0 + 2, tx - 4, ty - 6, curve=-10, color=c["accent_text"], width=1.8, head=8))
         parts.append(fonts.text("note", label, lx, ly0 + 6, 21, c["accent_text"]))
+        parts.append(fade(True) + "</g>")
         # label bulan
         last = None
         for wi, wk in enumerate(weeks):
             mname = datetime.date.fromisoformat(wk[0]["date"]).strftime("%b")
             if mname != last and wi < 51:
                 x, y = pt(wi + 0.2, 7.7)
-                parts.append(f'<g transform="translate({x:.1f} {y + 14:.1f}) rotate(-17.1)">'
-                             + fonts.text("note", mname, 0, 0, 16, c["ink2"]) + "</g>")
+                x2, y2 = p2(wi + 0.1, 0)
+                tr = ro = ""
+                if animate:
+                    at = 'attributeName="transform" dur="1.2s" fill="freeze" ' + EASE
+                    tr = (f'<animateTransform {at} type="translate" to="{x2:.1f} {y2 - 8:.1f}" begin="g.begin"/>'
+                          f'<animateTransform {at} type="translate" to="{x:.1f} {y + 14:.1f}" begin="b.begin"/>')
+                    ro = (f'<animateTransform {at} type="rotate" to="0" begin="g.begin"/>'
+                          f'<animateTransform {at} type="rotate" to="-17.1" begin="b.begin"/>')
+                parts.append(f'<g transform="translate({x:.1f} {y + 14:.1f})">{tr}<g transform="rotate(-17.1)">{ro}'
+                             + fonts.text("note", mname, 0, 0, 16, c["ink2"]) + "</g></g>")
                 last = mname
         foot = foot or "drawn fresh every day by GitHub Actions"
     else:
         parts.append(fonts.text("hand", empty_note or "waiting for the first sync...", PAD + 4, 134, 32, c["ink2"]))
         parts.append(pen.arrow(PAD + 120, 150, PAD + 170, 230, curve=20, color=c["ink2"], width=1.8))
         foot = foot or "updated automatically by GitHub Actions"
+
+    if animate:
+        for i, dname in ((1, "Mon"), (3, "Wed"), (5, "Fri")):
+            parts.append(f'<g opacity="0">{fonts.text("note", dname, GX - 34, GY + i * S2 + 11, 14, c["ink2"])}{fade(False)}</g>')
+        # jam bersama: 3D ditahan ~5 dtk -> berubah 1.2 dtk -> 2D ditahan 5 dtk -> kembali
+        parts.append('<rect width="0" height="0">'
+                     '<animate id="g" attributeName="x" from="0" to="0" begin="4s;b.end+5s" dur="1.2s"/>'
+                     '<animate id="b" attributeName="x" from="0" to="0" begin="g.end+5s" dur="1.2s"/></rect>')
 
     ly = H - 34
     parts.append(fonts.text("note", foot, PAD, ly + 12, 18, c["ink2"]))
