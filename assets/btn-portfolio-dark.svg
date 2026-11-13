@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="60" viewBox="0 0 220 60" role="img" aria-label="Portfolio">
+  <title>Portfolio</title>
+  <rect x="1" y="1" width="218" height="58" rx="14" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+  <rect x="12" y="12" width="36" height="36" rx="10" fill="#36BCF7" fill-opacity="0.16"/>
+  <g transform="translate(18 18)" fill="none" stroke="#36BCF7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.8 3.8 5.8 3.8 9s-1.2 6.2-3.8 9c-2.6-2.8-3.8-5.8-3.8-9S9.4 5.8 12 3z"/></g>
+  <text x="62" y="37" font-family="'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#e6edf3">Portfolio</text>
+  <path d="M188 36l10-10M190 26h8v8" fill="none" stroke="#8b949e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
