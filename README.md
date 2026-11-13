@@ -12,15 +12,11 @@
 
 </div>
 
-### About me
-
-Front-End Developer &amp; UI/UX Designer from Indonesia, crafting intuitive, responsive and visually engaging interfaces by blending design principles with modern front-end tech.
-
-🎓 **SMK 1 Ciamis** — Rekayasa Perangkat Lunak (2022 – 2025)
-
-<br/>
-
 <div align="center">
+
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/about-dark.svg"><source media="(prefers-color-scheme: light)" srcset="assets/about-light.svg"><img src="assets/about-dark.svg" alt="About me: Front-End Developer &amp; UI/UX Designer from Indonesia, crafting intuitive, responsive and visually engaging interfaces by blending design principles with modern front-end tech. Education: SMK 1 Ciamis, Rekayasa Perangkat Lunak (2022 – 2025)" width="100%"></picture>
+
+<br/><br/>
 
 <picture><source media="(prefers-color-scheme: dark)" srcset="assets/stack-dark.svg"><source media="(prefers-color-scheme: light)" srcset="assets/stack-light.svg"><img src="assets/stack-dark.svg" alt="Tech stack" width="100%"></picture>
 
