@@ -506,10 +506,32 @@ def paper(W, H, c, pen, fonts, seed_note=""):
     return defs, body
 
 
+# Animasi kecil yang dipakai bersama semua kartu sketsa. Tanpa dukungan animasi,
+# semua elemen tetap tampil normal (keyframes hanya menambah gerak).
+ANIM_CSS = (
+    ".tw,.spin,.sway,.pop{transform-box:fill-box;transform-origin:center}"
+    ".tw{animation:tw 2.6s ease-in-out infinite}@keyframes tw{50%{transform:scale(.72) rotate(18deg);opacity:.55}}"
+    ".bob{animation:bob 3s ease-in-out infinite}@keyframes bob{50%{transform:translateY(-4px)}}"
+    ".nudge{animation:nudge 1.8s ease-in-out infinite}@keyframes nudge{50%{transform:translate(3px,-3px)}}"
+    ".wave{animation:wave 2.2s ease-in-out infinite}@keyframes wave{50%{transform:translateX(5px)}}"
+    ".spin{animation:spin 6s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}"
+    ".sway{transform-origin:50% 0;animation:sway 4.5s ease-in-out infinite}@keyframes sway{50%{transform:rotate(-2.5deg)}}"
+    ".pop{animation:pop .55s cubic-bezier(.3,1.5,.5,1) backwards}@keyframes pop{from{opacity:0;transform:scale(.6)}}"
+    ".dash{animation:dash 1.1s linear infinite}@keyframes dash{to{stroke-dashoffset:-14}}"
+    "@media (prefers-reduced-motion:reduce){.tw,.bob,.nudge,.wave,.spin,.sway,.pop,.dash{animation:none}}"
+)
+
+
+def anim(cls, svg, delay=0.0):
+    """Bungkus elemen dengan kelas animasi (lihat ANIM_CSS)."""
+    st = f' style="animation-delay:{delay:.2f}s"' if delay else ""
+    return f'<g class="{cls}"{st}>{svg}</g>'
+
+
 def svg_doc(W, H, label, fonts, defs, body, extra_css=""):
     return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-label="{t(label)}">
   <title>{t(label)}</title>
-  <defs>{defs}<style>{fonts.css()}{extra_css}</style></defs>
+  <defs>{defs}<style>{fonts.css()}{ANIM_CSS}{extra_css}</style></defs>
   {body}
 </svg>
 '''
@@ -527,14 +549,15 @@ def stack_sketch(p, c):
     tw = fonts.width("hand", title, 46)
     parts.append(pen.highlight(PAD - 6, 62, tw + 14, 18, c["accent"], opacity=0.38 if c["dark"] else 0.32))
     parts.append(fonts.text("hand", title, PAD, 72, 46, c["ink"]))
-    parts.append(pen.star(PAD + tw + 26, 46, 11, color=c["accent_text"]))
-    parts.append(pen.sparkle(PAD + tw + 52, 66, 6, color=c["ink2"], width=1.5))
+    parts.append(anim("tw", pen.star(PAD + tw + 26, 46, 11, color=c["accent_text"])))
+    parts.append(anim("tw", pen.sparkle(PAD + tw + 52, 66, 6, color=c["ink2"], width=1.5), 1.1))
     note = "my everyday toolkit"
     nw = fonts.width("note", note, 20)
     parts.append(fonts.text("note", note, W - PAD - nw, 50, 20, c["ink2"]))
-    parts.append(pen.arrow(W - PAD - nw * 0.55, 60, W - PAD - nw * 0.85, 98, curve=-18, color=c["ink2"], width=1.6))
+    parts.append(anim("bob", pen.arrow(W - PAD - nw * 0.55, 60, W - PAD - nw * 0.85, 98, curve=-18, color=c["ink2"], width=1.6)))
 
     y = 118
+    pill_i = 0
     for gi, (group, items) in enumerate(p["stack"].items()):
         lw = fonts.width("hand", group, 26)
         parts.append(fonts.text("hand", group, PAD, y + 31, 26, c["accent_text"]))
@@ -548,18 +571,20 @@ def stack_sketch(p, c):
             cx, cy = x + pw / 2, y + PILL_H / 2
             hex_ = (sketch.brand(name) or (c["accent"],))[0]
             blob = f'<circle cx="{x + 12 + ICON / 2:.1f}" cy="{cy:.1f}" r="{ICON / 2 + 5}" fill="{hex_}" fill-opacity="{0.22 if c["dark"] else 0.16}"/>'
-            parts.append(
+            # pill muncul satu per satu ("pop"), lalu diam
+            parts.append(anim("pop",
                 f'<g transform="rotate({rot:.2f} {cx:.1f} {cy:.1f})">'
                 + pen.box(x, y, pw, PILL_H, r=14, color=c["ink"], width=1.5, fill=c["paper"], wobble=1.1)
                 + blob
                 + sketch.icon(name, x + 12, cy - ICON / 2, ICON, c["ink"], c["dark"])
                 + fonts.text("hand", name, x + 12 + ICON + 10, cy + 8.5, FS, c["ink"])
-                + "</g>")
+                + "</g>", 0.2 + pill_i * 0.07))
+            pill_i += 1
             x += pw + GAP_X
         y += PILL_H + 30
 
     # doodle penutup di pojok kanan bawah
-    parts.append(pen.spiral(W - PAD - 14, y - 6, 12, color=c["ink2"], width=1.4))
+    parts.append(anim("spin", pen.spiral(W - PAD - 14, y - 6, 12, color=c["ink2"], width=1.4)))
     H = y + 24
     defs, bg = paper(W, H, c, pen, fonts)
     label = "Tech stack: " + ", ".join(n for g in p["stack"].values() for n in g)
@@ -576,7 +601,7 @@ def hero_sketch(p, c):
     # sapaan kecil + ombak
     hi = "hi there, I'm"
     parts.append(fonts.text("note", hi, X + 4, 84, 26, c["ink2"]))
-    parts.append(pen.squiggle(X + 8 + fonts.width("note", hi, 26) + 10, 76, 34, amp=4, waves=2, color=c["accent_text"], width=2))
+    parts.append(anim("wave", pen.squiggle(X + 8 + fonts.width("note", hi, 26) + 10, 76, 34, amp=4, waves=2, color=c["accent_text"], width=2)))
 
     # nama besar dengan stabilo + garis bawah yang "digambar"
     name = p["name"]
@@ -584,8 +609,8 @@ def hero_sketch(p, c):
     parts.append(pen.highlight(X - 8, 160, nw + 18, 34, c["accent"], opacity=0.36 if c["dark"] else 0.30))
     parts.append(fonts.text("hand", name, X, 176, 104, c["ink"]))
     parts.append(f'<g class="draw">{pen.underline(X + 4, 198, nw * 0.62, color=c["accent_text"], width=3, loops=True)}</g>')
-    parts.append(pen.star(X + nw + 30, 104, 14, color=c["accent_text"], width=2.2))
-    parts.append(pen.sparkle(X + nw + 58, 136, 8, color=c["ink2"]))
+    parts.append(anim("tw", pen.star(X + nw + 30, 104, 14, color=c["accent_text"], width=2.2)))
+    parts.append(anim("tw", pen.sparkle(X + nw + 58, 136, 8, color=c["ink2"]), 1.3))
 
     # tagline + lokasi
     parts.append(fonts.text("hand", p["tagline"], X + 2, 256, 36, c["ink2"]))
@@ -623,10 +648,10 @@ def hero_sketch(p, c):
 
     # anotasi tangan
     parts.append(fonts.text("hand", "design", 748, 92, 30, c["accent_text"]))
-    parts.append(pen.arrow(790, 102, 852, 130, curve=-22, color=c["accent_text"], width=2))
+    parts.append(anim("nudge", pen.arrow(790, 102, 852, 130, curve=-22, color=c["accent_text"], width=2)))
     parts.append(fonts.text("note", "pixels -> code", 726, 300, 22, c["ink2"]))
     parts.append(pen.arrow(840, 290, 900, 272, curve=14, color=c["ink2"], width=1.6))
-    parts.append(pen.spiral(1150, 300, 11, color=c["ink2"], width=1.4))
+    parts.append(anim("spin", pen.spiral(1150, 300, 11, color=c["ink2"], width=1.4)))
 
     # tanpa animasi pun garis tetap tampil; efek "digambar" hanya lewat keyframes
     css = (".draw path{animation:draw 1.8s .3s ease-out backwards}"
@@ -652,7 +677,8 @@ def button_sketch(key, c):
         f'<g transform="translate({ix + 1} {iy + 1})" fill="none" stroke="{c["ink"]}" stroke-width="2" '
         f'stroke-linecap="round" stroke-linejoin="round">{ICONS[key]}</g>',
         fonts.text("hand", label, ix + 40, by + bh / 2 + 9, 28, c["ink"]),
-        pen.arrow(W - 50, by + bh / 2 + 7, W - 30, by + bh / 2 - 9, curve=-6, color=c["accent_text"], width=2, head=7),
+        anim("nudge", pen.arrow(W - 50, by + bh / 2 + 7, W - 30, by + bh / 2 - 9, curve=-6, color=c["accent_text"], width=2, head=7),
+             0.25 * list(BUTTON_LABELS).index(key)),
     ]
     g = f'<g transform="rotate({rot:.2f} {W / 2} {H / 2})">{"".join(body)}</g>'
     return svg_doc(W, H, label, fonts, "", g)
@@ -766,7 +792,7 @@ def calendar_sketch(p, c, weeks, foot=None, empty_note=None):
     tw = fonts.width("hand", title, 44)
     parts.append(pen.highlight(PAD - 6, 58, tw + 14, 18, c["accent"], opacity=0.38 if dark else 0.32))
     parts.append(fonts.text("hand", title, PAD, 68, 44, c["ink"]))
-    parts.append(pen.sparkle(PAD + tw + 22, 44, 8, color=c["accent_text"]))
+    parts.append(anim("tw", pen.sparkle(PAD + tw + 22, 44, 8, color=c["accent_text"])))
     if animate:
         mx = PAD + tw + 44
         parts.append(f'<g>{fonts.text("note", "(3D view)", mx, 62, 20, c["ink2"])}{fade(True)}</g>')
@@ -872,7 +898,7 @@ def footer_sketch(p, c):
 
     # pesawat kertas + jejak putus-putus
     trail = (f'<path d="M560 214C610 226 640 190 616 168C596 150 572 178 600 190C650 212 700 150 738 94" fill="none" '
-             f'stroke="{c["ink2"]}" stroke-width="1.8" stroke-dasharray="6 8" stroke-linecap="round"/>')
+             f'stroke="{c["ink2"]}" stroke-width="1.8" stroke-dasharray="6 8" stroke-linecap="round" class="dash"/>')
     px, py = 742, 58
     plane = [f'<path d="M{px} {py + 30}L{px + 86} {py}L{px + 58} {py + 74}L{px + 38} {py + 48}Z" fill="{c["paper"]}"/>',
              f'<path d="M{px + 38} {py + 48}L{px + 86} {py}L{px + 34} {py + 64}Z" fill="{c["accent"]}" fill-opacity="0.45"/>']
@@ -881,9 +907,9 @@ def footer_sketch(p, c):
         plane.append(pen.line(px + a[0], py + a[1], px + b[0], py + b[1], color=c["ink"], width=1.8, bow=0.8))
     parts.append(trail)
     parts.append(f'<g class="fly">{"".join(plane)}</g>')
-    parts.append(pen.sparkle(706, 70, 7, color=c["accent_text"]))
-    parts.append(pen.star(850, 180, 9, color=c["accent_text"]))
-    parts.append(pen.sparkle(820, 222, 5, color=c["ink2"], width=1.4))
+    parts.append(anim("tw", pen.sparkle(706, 70, 7, color=c["accent_text"])))
+    parts.append(anim("tw", pen.star(850, 180, 9, color=c["accent_text"]), 0.9))
+    parts.append(anim("tw", pen.sparkle(820, 222, 5, color=c["ink2"], width=1.4), 1.7))
 
     css = (".fly{animation:fly 5s ease-in-out infinite}"
            "@keyframes fly{50%{transform:translate(4px,-6px)}}"
@@ -915,7 +941,7 @@ def about_sketch(p, c):
     tw = fonts.width("hand", title, 44)
     parts.append(pen.highlight(PAD - 6, 60, tw + 14, 18, c["accent"], opacity=0.38 if c["dark"] else 0.32))
     parts.append(fonts.text("hand", title, PAD, 70, 44, c["ink"]))
-    parts.append(pen.squiggle(PAD + tw + 18, 56, 30, amp=4, waves=2, color=c["accent_text"], width=2))
+    parts.append(anim("wave", pen.squiggle(PAD + tw + 18, 56, 30, amp=4, waves=2, color=c["accent_text"], width=2)))
 
     # bio
     y = 116
@@ -950,9 +976,9 @@ def about_sketch(p, c):
     for line in wrap(fonts, "hand", p["currently"], 25, nw - 40):
         note.append(fonts.text("hand", line, nx + 20, yy, 25, c["ink"]))
         yy += 30
-    note.append(pen.star(nx + nw - 26, ny + nh - 24, 9, color=c["accent_text"]))
-    parts.append(f'<g transform="rotate(3 {nx + nw / 2} {ny + nh / 2})">{"".join(note)}</g>')
-    parts.append(pen.sparkle(nx - 26, ny + 20, 7, color=c["ink2"]))
+    note.append(anim("tw", pen.star(nx + nw - 26, ny + nh - 24, 9, color=c["accent_text"])))
+    parts.append(anim("sway", f'<g transform="rotate(3 {nx + nw / 2} {ny + nh / 2})">{"".join(note)}</g>'))
+    parts.append(anim("tw", pen.sparkle(nx - 26, ny + 20, 7, color=c["ink2"]), 0.8))
     H = max(H, ny + nh + 50)
 
     defs, bg = paper(W, H, c, pen, fonts)
@@ -986,37 +1012,20 @@ def readme(p):
     L = p["links"]
     hrefs = {"portfolio": L["portfolio"], "linkedin": L["linkedin"],
              "email": "mailto:" + L["email"], "github": L["github"]}
-    btns = "\n  ".join(
+    btns = "\n".join(
         f'<a href="{t(hrefs[k])}">{picture("btn-" + k, BUTTON_LABELS[k], height=52)}</a>'
         for k in BUTTON_LABELS)
     e = p["education"]
+    about_alt = "About me: " + p["bio"] + " Education: " + e["school"] + ", " + e["major"] + " (" + e["years"] + ")"
+    # satu blok HTML tanpa baris kosong -> tidak ada margin paragraf antar-kartu
     return f'''<!-- File ini dibuat oleh build.py dari profile.json. Edit data di sana, lalu jalankan: python3 build.py -->
 <div align="center">
-
-<p>{picture("hero", p["name"] + " — " + p["tagline"], width="100%")}</p>
-
-<p>
-  {btns}
-</p>
-
-</div>
-
-<div align="center">
-
-{picture("about", "About me: " + p["bio"] + " Education: " + e["school"] + ", " + e["major"] + " (" + e["years"] + ")", width="100%")}
-
-<br/><br/>
-
-{picture("stack", "Tech stack", width="100%")}
-
-<br/><br/>
-
-{picture("calendar", "Contribution calendar", width="100%", url=p.get("calendar_url") or None)}
-
-<br/><br/>
-
+{picture("hero", p["name"] + " — " + p["tagline"], width="100%")}<br>
+{btns}<br>
+{picture("about", about_alt, width="100%")}<br>
+{picture("stack", "Tech stack", width="100%")}<br>
+{picture("calendar", "Contribution calendar", width="100%", url=p.get("calendar_url") or None)}<br>
 <a href="mailto:{t(L["email"])}">{picture("footer", p["footer"]["cta"] + " " + L["email"], width="100%")}</a>
-
 </div>
 '''
 
